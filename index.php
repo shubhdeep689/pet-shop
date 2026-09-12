@@ -1,3 +1,7 @@
+<?php
+require_once "config/db.php";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -146,179 +150,159 @@
         </div>
     </section>
 
-    <!-- Featured Pets Section -->
-    <section id="pets" class="py-5">
-        <div class="container">
-            <!-- Section Header -->
-            <div class="text-center mb-5" data-aos="fade-up">
-                <h2 class="display-5 fw-bold text-primary mb-2">Featured Pets</h2>
-                <p class="lead text-muted">Find Your Perfect Companion</p>
-            </div>
+  <!-- Featured Pets Section -->
+<section id="pets" class="py-5">
 
-            <!-- Pet Cards Grid -->
-            <div class="row g-4">
-                <!-- Can Corso -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                    <div class="card h-100 pet-card">
-                        <img src="IMAGES\\CanCorso.webp" alt="Can Corso" class="card-img-top">
-                        <div class="card-body">
-                            <span class="badge bg-success mb-2">Available</span>
-                            <h5 class="card-title">Can Corso</h5>
-                            <p class="card-text text-muted">Loyal and protective breed</p>
-                            <div class="mb-2">
-                                <small><strong>Age:</strong> 2 years</small><br>
-                                <small><strong>Price:</strong> <span class="text-danger">₹45,000</span></small>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-light d-grid gap-2">
-                            <button class="btn btn-outline-primary btn-sm" title="View Details">View Details</button>
-                            <button class="btn btn-primary btn-sm add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
+    <div class="container">
 
-                <!-- German Shepherd -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="150">
-                    <div class="card h-100 pet-card">
-                        <img src="IMAGES\grmn.png" alt="German Shepherd" class="card-img-top">
-                        <div class="card-body">
-                            <span class="badge bg-success mb-2">Available</span>
-                            <h5 class="card-title">German Shepherd</h5>
-                            <p class="card-text text-muted">Loyal and intelligent protector</p>
-                            <div class="mb-2">
-                                <small><strong>Age:</strong> 3 years</small><br>
-                                <small><strong>Price:</strong> <span class="text-danger">₹50,000</span></small>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-light d-grid gap-2">
-                            <button class="btn btn-outline-primary btn-sm" title="View Details">View Details</button>
-                            <button class="btn btn-primary btn-sm add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
+        <!-- Section Header -->
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-5 fw-bold text-primary mb-2">
+                Featured Pets
+            </h2>
 
-                <!-- Husky -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="card h-100 pet-card">
-                        <img src="IMAGES\\HUSKY PUUPY.jpeg" alt="Husky" class="card-img-top">
-                        <div class="card-body">
-                            <span class="badge bg-success mb-2">Available</span>
-                            <h5 class="card-title">Husky</h5>
-                            <p class="card-text text-muted">Energetic and friendly sled dog</p>
-                            <div class="mb-2">
-                                <small><strong>Age:</strong> 1 year</small><br>
-                                <small><strong>Price:</strong> <span class="text-danger">₹48,000</span></small>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-light d-grid gap-2">
-                            <button class="btn btn-outline-primary btn-sm" title="View Details">View Details</button>
-                            <button class="btn btn-primary btn-sm add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Persian Cat -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="250">
-                    <div class="card h-100 pet-card">
-                        <img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400&h=300&fit=crop" alt="Persian Cat" class="card-img-top">
-                        <div class="card-body">
-                            <span class="badge bg-success mb-2">Available</span>
-                            <h5 class="card-title">Persian Cat</h5>
-                            <p class="card-text text-muted">Elegant and calm companion</p>
-                            <div class="mb-2">
-                                <small><strong>Age:</strong> 2 years</small><br>
-                                <small><strong>Price:</strong> <span class="text-danger">₹15,000</span></small>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-light d-grid gap-2">
-                            <button class="btn btn-outline-primary btn-sm" title="View Details">View Details</button>
-                            <button class="btn btn-primary btn-sm add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Parrot -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                    <div class="card h-100 pet-card">
-                        <img src="IMAGES\grey-parrot-on-branch-free-photo.jpg" alt="Parrot" class="card-img-top">
-                        <div class="card-body">
-                            <span class="badge bg-warning text-dark mb-2">Limited</span>
-                            <h5 class="card-title">African Grey Parrot</h5>
-                            <p class="card-text text-muted">Intelligent and vocal companion</p>
-                            <div class="mb-2">
-                                <small><strong>Age:</strong> 5 years</small><br>
-                                <small><strong>Price:</strong> <span class="text-danger">₹35,000</span></small>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-light d-grid gap-2">
-                            <button class="btn btn-outline-primary btn-sm" title="View Details">View Details</button>
-                            <button class="btn btn-primary btn-sm add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Rabbit -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="350">
-                    <div class="card h-100 pet-card">
-                        <img src="IMAGES\netherland-dwarf-971x1024.jpg" alt="Rabbit" class="card-img-top">
-                        <div class="card-body">
-                            <span class="badge bg-success mb-2">Available</span>
-                            <h5 class="card-title">Dwarf Rabbit</h5>
-                            <p class="card-text text-muted">Cute and cuddly pet</p>
-                            <div class="mb-2">
-                                <small><strong>Age:</strong> 1 year</small><br>
-                                <small><strong>Price:</strong> <span class="text-danger">₹5,000</span></small>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-light d-grid gap-2">
-                            <button class="btn btn-outline-primary btn-sm" title="View Details">View Details</button>
-                            <button class="btn btn-primary btn-sm add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Hamster -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
-                    <div class="card h-100 pet-card">
-                        <img src="IMAGES\hamster.jpg" alt="Hamster" class="card-img-top">
-                        <div class="card-body">
-                            <span class="badge bg-success mb-2">Available</span>
-                            <h5 class="card-title">Syrian Hamster</h5>
-                            <p class="card-text text-muted">Small and playful pet</p>
-                            <div class="mb-2">
-                                <small><strong>Age:</strong> 6 months</small><br>
-                                <small><strong>Price:</strong> <span class="text-danger">₹1,500</span></small>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-light d-grid gap-2">
-                            <button class="btn btn-outline-primary btn-sm" title="View Details">View Details</button>
-                            <button class="btn btn-primary btn-sm add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Aquarium Fish -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="450">
-                    <div class="card h-100 pet-card">
-                        <img src="IMAGES\aquarium_fish.webp" alt="Aquarium Fish" class="card-img-top">
-                        <div class="card-body">
-                            <span class="badge bg-success mb-2">Available</span>
-                            <h5 class="card-title">Betta Fish</h5>
-                            <p class="card-text text-muted">Colorful aquatic companion</p>
-                            <div class="mb-2">
-                                <small><strong>Age:</strong> 1 year</small><br>
-                                <small><strong>Price:</strong> <span class="text-danger">₹800</span></small>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-light d-grid gap-2">
-                            <button class="btn btn-outline-primary btn-sm" title="View Details">View Details</button>
-                            <button class="btn btn-primary btn-sm add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <p class="lead text-muted">
+                Find Your Perfect Companion
+            </p>
         </div>
-    </section>
+
+        <!-- Pet Cards Grid -->
+        <div class="row g-4">
+
+            <?php
+
+            $petQuery = "SELECT * FROM pets ORDER BY id ASC";
+            $petResult = $conn->query($petQuery);
+
+            if ($petResult && $petResult->num_rows > 0):
+
+                $delay = 100;
+
+                while ($pet = $petResult->fetch_assoc()):
+
+                    // Badge based on pet type
+                    $badge = "Available";
+                    $badgeClass = "bg-success";
+
+                    if ($pet["category"] === "bird") {
+                        $badge = "Limited";
+                        $badgeClass = "bg-warning text-dark";
+                    }
+
+            ?>
+
+                    <!-- Pet Card -->
+                    <div class="col-lg-3 col-md-6"
+                         data-aos="fade-up"
+                         data-aos-delay="<?php echo $delay; ?>">
+
+                        <div class="card h-100 pet-card">
+
+                            <!-- Pet Image -->
+                            <img
+                                src="<?php echo htmlspecialchars($pet["image"]); ?>"
+                                alt="<?php echo htmlspecialchars($pet["name"]); ?>"
+                                class="card-img-top"
+                            >
+
+                            <!-- Pet Details -->
+                            <div class="card-body">
+
+                                <span class="badge <?php echo $badgeClass; ?> mb-2">
+                                    <?php echo $badge; ?>
+                                </span>
+
+                                <h5 class="card-title">
+                                    <?php echo htmlspecialchars($pet["name"]); ?>
+                                </h5>
+
+                                <p class="card-text text-muted">
+                                    <?php echo htmlspecialchars($pet["description"]); ?>
+                                </p>
+
+                                <div class="mb-2">
+
+                                    <small>
+                                        <strong>Age:</strong>
+                                        <?php echo htmlspecialchars($pet["age"]); ?>
+                                    </small>
+
+                                    <br>
+
+                                    <small>
+                                        <strong>Price:</strong>
+                                        <span class="text-danger">
+                                            ₹<?php echo number_format((float)$pet["price"], 0); ?>
+                                        </span>
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="card-footer bg-light d-grid gap-2">
+
+                                <a
+                                    href="product.php?id=<?php echo $pet["id"]; ?>"
+                                    class="btn btn-outline-primary btn-sm"
+                                >
+                                    View Details
+                                </a>
+
+                                <a
+                                    href="add_to_cart.php?id=<?php echo $pet["id"]; ?>"
+                                    class="btn btn-primary btn-sm"
+                                >
+                                    <i class="bi bi-cart-plus me-1"></i>
+                                    Add to Cart
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+            <?php
+
+                    $delay += 50;
+
+                endwhile;
+
+            else:
+
+            ?>
+
+                <!-- No Pets -->
+                <div class="col-12 text-center">
+
+                    <div class="alert alert-info">
+                        No pets available right now.
+                    </div>
+
+                </div>
+
+            <?php endif; ?>
+
+        </div>
+
+        <!-- View All Pets -->
+        <div class="text-center mt-5">
+
+            <a href="pets.php"
+               class="btn btn-outline-primary px-4">
+
+                <i class="bi bi-grid me-1"></i>
+                View All Pets
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
 
     <!-- Pet Categories Section -->
     <section class="py-5 bg-light">
@@ -938,168 +922,192 @@
         </div>
     </section>
 
-    <!-- Product Showcase Section -->
-    <section id="products" class="py-5 bg-light">
-        <div class="container">
-            <!-- Section Header -->
-            <div class="text-center mb-5" data-aos="fade-up">
-                <h2 class="display-5 fw-bold text-primary mb-2">Product Showcase</h2>
-                <p class="lead text-muted">Premium Pet Products</p>
-            </div>
 
-            <!-- Product Cards -->
-            <div class="row g-4">
-                <!-- Product 1: Pet Food -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                    <div class="card h-100 product-card border-0 shadow-sm">
-                        <div class="product-image">
-                            <img src="IMAGES\top_rated_dry_dog_foods.jpg" alt="Premium Pet Food" class="card-img-top">
-                            <span class="badge bg-danger position-absolute top-2 end-2">20% OFF</span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Premium Pet Food</h5>
-                            <div class="mb-2">
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-half text-warning"></i>
-                                <small class="text-muted">(245 reviews)</small>
-                            </div>
-                            <h6 class="text-danger mb-3">₹2,500 <small class="text-muted text-decoration-line-through">₹3,000</small></h6>
-                        </div>
-                        <div class="card-footer bg-light border-0">
-                            <button class="btn btn-primary w-100 btn-sm add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
+<!-- Product Showcase Section -->
+<section id="products" class="py-5 bg-light">
 
-                <!-- Product 2: Leash -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="150">
-                    <div class="card h-100 product-card border-0 shadow-sm">
-                        <div class="product-image">
-                            <img src="IMAGES\leash.webp" alt="Designer Leash" class="card-img-top">
-                            <span class="badge bg-success position-absolute top-2 end-2">NEW</span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Designer Leash</h5>
-                            <div class="mb-2">
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star text-warning"></i>
-                                <small class="text-muted">(128 reviews)</small>
-                            </div>
-                            <h6 class="text-danger mb-3">₹1,200</h6>
-                        </div>
-                        <div class="card-footer bg-light border-0">
-                            <button class="btn btn-primary w-100 btn-sm add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
+    <div class="container">
 
-                <!-- Product 3: Toys -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="card h-100 product-card border-0 shadow-sm">
-                        <div class="product-image">
-                            <img src="IMAGES\dog-toys.webp" alt="Pet Toys Set" class="card-img-top">
-                            <span class="badge bg-warning text-dark position-absolute top-2 end-2">15% OFF</span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Pet Toys Set</h5>
-                            <div class="mb-2">
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <small class="text-muted">(312 reviews)</small>
-                            </div>
-                            <h6 class="text-danger mb-3">₹899 <small class="text-muted text-decoration-line-through">₹1,050</small></h6>
-                        </div>
-                        <div class="card-footer bg-light border-0">
-                            <button class="btn btn-primary w-100 btn-sm add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
+        <!-- Section Header -->
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-5 fw-bold text-primary mb-2">
+                Product Showcase
+            </h2>
 
-                <!-- Product 4: Food Bowl -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="250">
-                    <div class="card h-100 product-card border-0 shadow-sm">
-                        <div class="product-image">
-                            <img src="IMAGES\bowlll.jpg" alt="Stainless Bowl Set" class="card-img-top">
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Stainless Bowl Set</h5>
-                            <div class="mb-2">
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-half text-warning"></i>
-                                <small class="text-muted">(89 reviews)</small>
-                            </div>
-                            <h6 class="text-danger mb-3">₹599</h6>
-                        </div>
-                        <div class="card-footer bg-light border-0">
-                            <button class="btn btn-primary w-100 btn-sm add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product 5: Pet Bed -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                    <div class="card h-100 product-card border-0 shadow-sm">
-                        <div class="product-image">
-                            <img src="IMAGES\PetBed.webp" alt="Comfortable Pet Bed" class="card-img-top">
-                            <span class="badge bg-danger position-absolute top-2 end-2">25% OFF</span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Comfortable Pet Bed</h5>
-                            <div class="mb-2">
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <small class="text-muted">(425 reviews)</small>
-                            </div>
-                            <h6 class="text-danger mb-3">₹3,000 <small class="text-muted text-decoration-line-through">₹4,000</small></h6>
-                        </div>
-                        <div class="card-footer bg-light border-0">
-                            <button class="btn btn-primary w-100 btn-sm add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product 6: Grooming Kit -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="350">
-                    <div class="card h-100 product-card border-0 shadow-sm">
-                        <div class="product-image">
-                            <img src="IMAGES\groomingKit.jpg" alt="Grooming Kit" class="card-img-top">
-                            <span class="badge bg-success position-absolute top-2 end-2">NEW</span>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Complete Grooming Kit</h5>
-                            <div class="mb-2">
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <i class="bi bi-star text-warning"></i>
-                                <small class="text-muted">(156 reviews)</small>
-                            </div>
-                            <h6 class="text-danger mb-3">₹2,999</h6>
-                        </div>
-                        <div class="card-footer bg-light border-0">
-                            <button class="btn btn-primary w-100 btn-sm add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <p class="lead text-muted">
+                Premium Pet Products
+            </p>
         </div>
-    </section>
+
+
+        <!-- Product Cards -->
+        <div class="row g-4">
+
+            <?php
+
+            $productQuery = "SELECT * FROM products ORDER BY id ASC";
+            $productResult = $conn->query($productQuery);
+
+            if ($productResult && $productResult->num_rows > 0):
+
+                $delay = 100;
+
+                while ($product = $productResult->fetch_assoc()):
+
+            ?>
+
+                    <div class="col-lg-3 col-md-6"
+                         data-aos="fade-up"
+                         data-aos-delay="<?php echo $delay; ?>">
+
+                        <div class="card h-100 product-card border-0 shadow-sm">
+
+
+                            <!-- Product Image -->
+                            <div class="product-image position-relative">
+
+                                <img
+                                    src="<?php echo htmlspecialchars($product["image"]); ?>"
+                                    alt="<?php echo htmlspecialchars($product["name"]); ?>"
+                                    class="card-img-top"
+                                >
+
+                                <?php if (!empty($product["badge"])): ?>
+
+                                    <span class="badge
+                                        <?php
+                                        echo ($product["badge"] === "NEW")
+                                            ? "bg-success"
+                                            : "bg-danger";
+                                        ?>
+                                        position-absolute top-0 end-0 m-2">
+
+                                        <?php echo htmlspecialchars($product["badge"]); ?>
+
+                                    </span>
+
+                                <?php endif; ?>
+
+                            </div>
+
+
+                            <!-- Product Details -->
+                            <div class="card-body">
+
+                                <h5 class="card-title">
+                                    <?php echo htmlspecialchars($product["name"]); ?>
+                                </h5>
+
+
+                                <!-- Rating -->
+                                <div class="mb-2">
+
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-half text-warning"></i>
+
+                                    <small class="text-muted">
+                                        (Popular)
+                                    </small>
+
+                                </div>
+
+
+                                <!-- Price -->
+                                <h6 class="text-danger mb-3">
+
+                                    ₹<?php
+                                    echo number_format(
+                                        (float)$product["price"],
+                                        0
+                                    );
+                                    ?>
+
+
+                                    <?php if (!empty($product["old_price"])): ?>
+
+                                        <small class="text-muted text-decoration-line-through">
+
+                                            ₹<?php
+                                            echo number_format(
+                                                (float)$product["old_price"],
+                                                0
+                                            );
+                                            ?>
+
+                                        </small>
+
+                                    <?php endif; ?>
+
+                                </h6>
+
+                            </div>
+
+
+                            <!-- Add To Cart -->
+                            <div class="card-footer bg-light border-0">
+
+                                <a
+                                    href="add_to_cart.php?product_id=<?php echo $product["id"]; ?>"
+                                    class="btn btn-primary w-100 btn-sm"
+                                >
+
+                                    <i class="bi bi-cart-plus me-1"></i>
+
+                                    Add to Cart
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+            <?php
+
+                    $delay += 50;
+
+                endwhile;
+
+            else:
+
+            ?>
+
+                <!-- No Products -->
+                <div class="col-12 text-center">
+
+                    <div class="alert alert-info">
+                        No products available right now.
+                    </div>
+
+                </div>
+
+            <?php endif; ?>
+
+        </div>
+
+
+        <!-- View All Products -->
+        <div class="text-center mt-5">
+
+            <a href="product.php"
+               class="btn btn-outline-primary px-4">
+
+                <i class="bi bi-grid me-1"></i>
+                View All Products
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
 
     <!-- Testimonials Section -->
     <section id="testimonials" class="py-5">

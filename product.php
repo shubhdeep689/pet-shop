@@ -1,4 +1,4 @@
-```php
+
 <?php
 
 session_start();
@@ -301,4 +301,4 @@ AOS.init({
 </body>
 
 </html>
-```
+
