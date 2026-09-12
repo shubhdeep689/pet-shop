@@ -199,22 +199,81 @@ $result = $conn->query($sql);
                         </div>
 
 
-                        <!-- Add To Cart -->
+                        <?php if ((int)$product["stock"] <= 0): ?>
 
-                        <div class="card-footer bg-light border-0">
+    <div class="mb-2">
+        <span class="badge bg-danger">
+            <i class="bi bi-x-circle-fill me-1"></i>
+            Out of Stock
+        </span>
+    </div>
+<a
+    href="add_to_wishlist.php?product_id=<?php echo (int)$product["id"]; ?>"
+    class="btn btn-outline-danger w-100 btn-sm mb-2"
+>
+    <i class="bi bi-heart me-1"></i>
+    Add to Wishlist
+</a>
+    <button
+        type="button"
+        class="btn btn-danger w-100 btn-sm"
+        disabled>
 
+        <i class="bi bi-x-circle me-1"></i>
+        Out of Stock
+    </button>
+    
+    
+<?php elseif ((int)$product["stock"] <= 5): ?>
 
-                            <a href="add_to_cart.php?product_id=<?php echo $product["id"]; ?>"
-                               class="btn btn-primary w-100 btn-sm">
+    <div class="mb-2">
+        <span class="badge bg-warning text-dark">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+            Only <?php echo (int)$product["stock"]; ?> left
+        </span>
+    </div>
+<a
+    href="add_to_wishlist.php?product_id=<?php echo (int)$product["id"]; ?>"
+    class="btn btn-outline-danger w-100 btn-sm mb-2"
+>
+    <i class="bi bi-heart me-1"></i>
+    Add to Wishlist
+</a>
+    <a
+        href="add_to_cart.php?product_id=<?php echo (int)$product["id"]; ?>"
+        class="btn btn-primary w-100 btn-sm">
 
-                                <i class="bi bi-cart-plus me-1"></i>
+        <i class="bi bi-cart-plus me-1"></i>
+        Add to Cart
 
-                                Add to Cart
+    </a>
+    
 
-                            </a>
+<?php else: ?>
 
+    <div class="mb-2">
+        <span class="badge bg-success">
+            <i class="bi bi-check-circle-fill me-1"></i>
+            In Stock
+        </span>
+    </div>
+    <a
+    href="add_to_wishlist.php?product_id=<?php echo (int)$product["id"]; ?>"
+    class="btn btn-outline-danger w-100 btn-sm mb-2"
+>
+    <i class="bi bi-heart me-1"></i>
+    Add to Wishlist
+</a>
+    <a
+        href="add_to_cart.php?product_id=<?php echo (int)$product["id"]; ?>"
+        class="btn btn-primary w-100 btn-sm">
 
-                        </div>
+        <i class="bi bi-cart-plus me-1"></i>
+        Add to Cart
+
+    </a>
+
+<?php endif; ?>
 
 
                     </div>
