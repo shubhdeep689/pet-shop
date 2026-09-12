@@ -131,7 +131,7 @@
                             <!-- Phone -->
                             <div class="mb-4">
                                 <h6 class="text-primary mb-2"><i class="bi bi-telephone"></i> Phone</h6>
-                                <a href="tel:+919872547768" class="text-decoration-none text-dark">+91 98725 47768</a>
+                                <a href="tel:+919779654617" class="text-decoration-none text-dark">+91 97796 54617</a>
                             </div>
 
                             <!-- Email -->
@@ -157,7 +157,7 @@
                                     <a href="https://instagram.com" class="btn btn-outline-danger btn-sm" title="Instagram" data-bs-toggle="tooltip">
                                         <i class="bi bi-instagram"></i>
                                     </a>
-                                    <a href="https://wa.me/919876543210" class="btn btn-outline-success btn-sm" title="WhatsApp" data-bs-toggle="tooltip">
+                                    <a href="https://wa.me/919779654617" class="btn btn-outline-success btn-sm" title="WhatsApp" data-bs-toggle="tooltip">
                                         <i class="bi bi-whatsapp"></i>
                                     </a>
                                     <a href="https://youtube.com" class="btn btn-outline-danger btn-sm" title="YouTube" data-bs-toggle="tooltip">
@@ -196,22 +196,9 @@
     </section>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-           <!-- inherting footer -->
-     <div id="footer"></div>
+          <!-- inherting footer -->
+     <!--  <div id="footer"></div> -->
+     <?php include 'footer.php'; ?>
  <!-- Back to Top Button -->
     <button id="backToTopBtn" class="btn btn-primary rounded-circle position-fixed" title="Back to top">
         <i class="bi bi-arrow-up"></i>

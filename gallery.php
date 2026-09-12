@@ -57,8 +57,9 @@
 </head>
 <body>
 
-    <!-- Inherited navbar -->
-    <div id="navbar"></div>
+      <!-- inherting navbar -->
+     <!--  <div id="navbar"></div> -->
+    <?php include 'navbar.php'; ?>
 
     <!-- Gallery Section -->
     <section id="gallery" class="py-5">
@@ -205,8 +206,9 @@
         </div>
     </div>
 
-    <!-- Inherited footer -->
-    <div id="footer"></div>
+     <!-- inherting footer -->
+     <!--  <div id="footer"></div> -->
+     <?php include 'footer.php'; ?>
 
     <!-- Back to Top Button -->
     <button id="backToTopBtn" class="btn btn-primary rounded-circle position-fixed" title="Back to top" style="bottom: 2rem; right: 2rem; display: none; z-index: 999;">

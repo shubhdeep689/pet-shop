@@ -16,7 +16,7 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     // Load Navbar
-    fetch("navbar.html")
+    fetch("navbar.php")
         .then(response => response.text())
         .then(data => {
             document.getElementById("navbar").innerHTML = data;
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => console.error("Error loading navbar:", error));
 
     // Load Footer
-    fetch("footer.html")
+    fetch("footer.php")
         .then(response => response.text())
         .then(data => {
             document.getElementById("footer").innerHTML = data;
@@ -907,7 +907,7 @@ console.log('%cThank you for visiting our website!', 'font-size: 14px; color: #9
 document.addEventListener("DOMContentLoaded", function () {
 
     // Load Navbar
-    fetch("navbar.html")
+    fetch("navbar.php")
         .then(response => response.text())
         .then(data => {
             document.getElementById("navbar").innerHTML = data;
@@ -915,7 +915,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => console.error("Navbar not loaded:", error));
 
     // Load Footer
-    fetch("footer.html")
+    fetch("footer.php")
         .then(response => response.text())
         .then(data => {
             document.getElementById("footer").innerHTML = data;

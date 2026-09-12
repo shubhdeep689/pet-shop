@@ -26,7 +26,8 @@
 </head>
 <body>
      <!-- inherting navbar -->
-      <div id="navbar"></div>
+     <!--  <div id="navbar"></div> -->
+    <?php include 'navbar.php'; ?>
 
       <!-- About Us Section -->
     <section id="about" class="py-5 bg-light">
@@ -178,7 +179,8 @@
     </div>
 </section>
      <!-- inherting footer -->
-     <div id="footer"></div>
+     <!--  <div id="footer"></div> -->
+     <?php include 'footer.php'; ?>
  <!-- Back to Top Button -->
     <button id="backToTopBtn" class="btn btn-primary rounded-circle position-fixed" title="Back to top">
         <i class="bi bi-arrow-up"></i>

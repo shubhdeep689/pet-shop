@@ -5,7 +5,7 @@
                 <!-- Column 1: About -->
                 <div class="col-lg-3 col-md-6 ">
                     <h6 class="text-primary fw-bold mb-3">About Brar Pet Shop</h6>
-                    <p class="text-muted">Your trusted partner for happy pets. We provide premium quality pets, accessories, and professional pet care services.</p>
+                    <p class="text ">Your trusted partner for happy pets. We provide premium quality pets, accessories, and professional pet care services.</p>
                     <div class="gap-2 d-flex mt-3">
                         <a href="https://facebook.com" class="btn btn-outline-light btn-sm" title="Facebook">
                             <i class="bi bi-facebook"></i>
@@ -13,7 +13,7 @@
                         <a href="https://instagram.com" class="btn btn-outline-light btn-sm" title="Instagram">
                             <i class="bi bi-instagram"></i>
                         </a>
-                        <a href="https://wa.me/+919872547768" class="btn btn-outline-light btn-sm" title="WhatsApp">
+                        <a href="https://wa.me/+91977965617" class="btn btn-outline-light btn-sm" title="WhatsApp">
                             <i class="bi bi-whatsapp"></i>
                         </a>
                         <a href="https://youtube.com" class="btn btn-outline-light btn-sm" title="YouTube">
@@ -54,7 +54,7 @@
                 <!-- Column 4: Newsletter -->
                 <div class="col-lg-3 col-md-6">
                     <h6 class="text-primary fw-bold mb-3">Newsletter</h6>
-                    <p class="text-muted mb-3">Subscribe to our newsletter to get updates on new pets and products.</p>
+                    <p class="text mb-3">Subscribe to our newsletter to get updates on new pets and products.</p>
                     <form class="input-group" id="newsletterForm">
                         <input type="email" class="form-control" placeholder="Your email" aria-label="Your email" required>
                         <button class="btn btn-primary" type="submit">Subscribe</button>
@@ -66,13 +66,13 @@
             <hr class="bg-secondary">
             <div class="row">
                 <div class="col-md-6">
-                    <p class="text-muted mb-0">&copy; 2024 Brar Pet Shop. All rights reserved.</p>
+                    <p class="text mb-0">&copy; 2024 Brar Pet Shop. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <small class="text-muted">
-                        <a href="#" class="text-muted text-decoration-none">Privacy Policy</a> |
-                        <a href="#" class="text-muted text-decoration-none">Terms of Service</a> |
-                        <a href="#" class="text-muted text-decoration-none">Cookie Policy</a>
+                        <a href="#" class="texttext-decoration-none">Privacy Policy</a> |
+                        <a href="#" class="text text-decoration-none">Terms of Service</a> |
+                        <a href="#" class="text text-decoration-none">Cookie Policy</a>
                     </small>
                 </div>
             </div>

@@ -7,7 +7,7 @@ A complete, modern, and responsive frontend website for "Brar Pet Shop" - a prem
 **Business Name:** Brar Pet Shop  
 **Tagline:** Your Trusted Partner for Happy Pets  
 **Location:** Old Fazilka, Abohar, Punjab 152116  
-**Contact:** +91 98725 47768 | info@brarpetshop.com
+**Contact:** +91 9779654617 | info@brarpetshop.com
 
 ## ✨ Features Included
 
@@ -163,7 +163,7 @@ A complete, modern, and responsive frontend website for "Brar Pet Shop" - a prem
 
 ```
 PET SHOP/
-├── index.html          (Main HTML file - 2000+ lines)
+├── index.php          (Main HTML file - 2000+ lines)
 ├── style.css           (Custom CSS - 1000+ lines)
 ├── script.js           (JavaScript - 700+ lines)
 └── README.md          (This file)
@@ -284,7 +284,7 @@ This project is free to use and customize for commercial purposes.
 
 For questions or issues:
 -- Email: info@brarpetshop.com
--- Phone: +91 98725 47768
+-- Phone: +91 97796 54617
 -- Location: Old Fazilka, Abohar, Punjab 152116
 
 ## 🎉 Deployment
@@ -307,7 +307,7 @@ For questions or issues:
 
 **Business:** Brar Pet Shop  
 **Address:** Old Fazilka, Abohar, Punjab 152116  
-**Phone:** +91 98725 47768  
+**Phone:** +91 97796 54617  
 **Email:** info@brarpetshop.com  
 **Hours:** Monday - Saturday: 9 AM - 6 PM | Sunday: 10 AM - 4 PM  
 

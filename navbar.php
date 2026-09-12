@@ -1,3 +1,14 @@
+
+<?php
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$isLoggedIn = isset($_SESSION["user_id"]);
+$userName = $_SESSION["user_name"] ?? "";
+
+?>
 <!-- Sticky Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm" id="mainNavbar" data-bs-spy="scroll" data-bs-target="#mainNavbar">
         <div class="container-fluid">
@@ -15,31 +26,31 @@
                 <!-- Main Navigation Links -->
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 me-3">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="index.html">Home</a>
+                        <a class="nav-link active" aria-current="page" href="index.php">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="about.html">About</a>
+                        <a class="nav-link" href="about.php">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="pets.html">Pets</a>
+                        <a class="nav-link" href="pets.php">Pets</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="product.html">Products</a>
+                        <a class="nav-link" href="product.php">Products</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.html#services">Services</a>
+                        <a class="nav-link" href="index.php#services">Services</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="gallery.html">Gallery</a>
+                        <a class="nav-link" href="gallery.php">Gallery</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.html#testimonials">Testimonials</a>
+                        <a class="nav-link" href="index.php#testimonials">Testimonials</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.html#faq">FAQ</a>
+                        <a class="nav-link" href="index.php#faq">FAQ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="contact.html">Contact</a>
+                        <a class="nav-link" href="contact.php">Contact</a>
                     </li>
                     <!-- More Dropdown -->
                     <li class="nav-item dropdown">
@@ -47,11 +58,11 @@
                             More
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="moreDropdown">
-                            <li><a class="dropdown-item" href="index.html#services"><i class="bi bi-heart"></i> Pet Care Tips</a></li>
-                            <li><a class="dropdown-item" href="index.services"><i class="bi bi-shield-check"></i> Vaccination Guide</a></li>
+                            <li><a class="dropdown-item" href="index.php#services"><i class="bi bi-heart"></i> Pet Care Tips</a></li>
+                            <li><a class="dropdown-item" href="index.php#services"><i class="bi bi-shield-check"></i> Vaccination Guide</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="pets.html"><i class="bi bi-hand-thumbs-up"></i> Pet Adoption</a></li>
-                            <li><a class="dropdown-item" href="product.html"><i class="bi bi-bag"></i> Pet Accessories</a></li>
+                            <li><a class="dropdown-item" href="pets.php"><i class="bi bi-hand-thumbs-up"></i> Pet Adoption</a></li>
+                            <li><a class="dropdown-item" href="product.php"><i class="bi bi-bag"></i> Pet Accessories</a></li>
                             <li><a class="dropdown-item" href="#"><i class="bi bi-pencil-square"></i> Blog</a></li>
                         </ul>
                     </li>
@@ -77,13 +88,40 @@
         </div>
         <div class="offcanvas-body p-0">
             <!-- User Profile Area -->
-            <div class="p-3 border-bottom">
-                <div class="text-center">
-                    <img src="IMAGES/BRAR%20PET%20SHOP%20LOGO.jpeg" alt="User Profile" class="rounded-circle mb-2" width="100" height="60">
-                    <h6 class="mb-1">Welcome Guest</h6>
-                    <small class="text-muted">Not logged in</small>
-                </div>
-            </div>
+<div class="p-3 border-bottom">
+    <div class="text-center">
+
+        <img src="IMAGES/BRAR%20PET%20SHOP%20LOGO.jpeg"
+             alt="User Profile"
+             class="rounded-circle mb-2"
+             width="100"
+             height="60">
+
+        <?php if ($isLoggedIn): ?>
+
+            <h6 class="mb-1">
+                Welcome, <?php echo htmlspecialchars($userName); ?>
+            </h6>
+
+            <small class="text-success">
+                <i class="bi bi-circle-fill" style="font-size: 8px;"></i>
+                Logged in
+            </small>
+
+        <?php else: ?>
+
+            <h6 class="mb-1">
+                Welcome Guest
+            </h6>
+
+            <small class="text-muted">
+                Not logged in
+            </small>
+
+        <?php endif; ?>
+
+    </div>
+</div>
 
             <!-- Quick Actions -->
             <div class="p-3 border-bottom">
@@ -95,36 +133,82 @@
                     </button>
                 </form>
                 <div class="d-grid gap-2">
-                    <button class="btn btn-outline-secondary btn-sm" id="darkModeToggle" type="button" title="Toggle dark mode">
-                        <i class="bi bi-moon-fill"></i> Dark / Light Mode
-                    </button>
-                    <a href="#" class="btn btn-outline-primary btn-sm" title="Login">
-                        <i class="bi bi-person"></i> Login
-                    </a>
-                    <a href="#" class="btn btn-primary btn-sm" title="Register">
-                        <i class="bi bi-user-plus"></i> Register
-                    </a>
-                    <button class="btn btn-warning btn-sm position-relative" type="button" id="cartBtn" title="Shopping cart">
-                        <i class="bi bi-cart-fill"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cartBadge">
-                            0
-                            <span class="visually-hidden">items in cart</span>
-                        </span>
-                    </button>
-                </div>
+
+    <!-- Dark / Light Mode -->
+    <button class="btn btn-outline-secondary btn-sm"
+            id="darkModeToggle"
+            type="button"
+            title="Toggle dark mode">
+
+        <i class="bi bi-moon-fill"></i>
+        Dark / Light Mode
+
+    </button>
+
+
+    <?php if ($isLoggedIn): ?>
+
+        <!-- Logged-in user -->
+
+        <a href="cart.php"
+           class="btn btn-warning btn-sm"
+           title="Shopping cart">
+
+            <i class="bi bi-cart-fill"></i>
+            Cart
+
+        </a>
+
+
+        <a href="logout.php"
+           class="btn btn-danger btn-sm"
+           title="Logout">
+
+            <i class="bi bi-box-arrow-right"></i>
+            Logout
+
+        </a>
+
+
+    <?php else: ?>
+
+        <!-- Guest user -->
+
+        <a href="login.php"
+           class="btn btn-outline-primary btn-sm"
+           title="Login">
+
+            <i class="bi bi-person"></i>
+            Login
+
+        </a>
+
+
+        <a href="signup.php"
+           class="btn btn-primary btn-sm"
+           title="Register">
+
+            <i class="bi bi-user-plus"></i>
+            Register
+
+        </a>
+
+    <?php endif; ?>
+
+</div>
             </div>
             
             <!-- Navigation Links -->
             <ul class="list-unstyled p-3 border-bottom">
-                <li class="mb-2"><a href="index.html" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-house"></i> Home</a></li>
-                <li class="mb-2"><a href="about.html" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-info-circle"></i> About Us</a></li>
-                <li class="mb-2"><a href="pets.html" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-paw"></i> Pets</a></li>
-                <li class="mb-2"><a href="product.html" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-bag"></i> Products</a></li>
-                <li class="mb-2"><a href="index.html#services" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-gear"></i> Services</a></li>
-                <li class="mb-2"><a href="gallery.html" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-image"></i> Gallery</a></li>
-                <li class="mb-2"><a href="index.html#testimonials" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-chat-left-quote"></i> Testimonials</a></li>
-                <li class="mb-2"><a href="index.html#faq" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-question-circle"></i> FAQ</a></li>
-                <li class="mb-2"><a href="contact.html" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-telephone"></i> Contact</a></li>
+                <li class="mb-2"><a href="index.php" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-house"></i> Home</a></li>
+                <li class="mb-2"><a href="about.php" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-info-circle"></i> About Us</a></li>
+                <li class="mb-2"><a href="pets.php" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-paw"></i> Pets</a></li>
+                <li class="mb-2"><a href="product.php" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-bag"></i> Products</a></li>
+                <li class="mb-2"><a href="index.php#services" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-gear"></i> Services</a></li>
+                <li class="mb-2"><a href="gallery.php" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-image"></i> Gallery</a></li>
+                <li class="mb-2"><a href="index.php#testimonials" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-chat-left-quote"></i> Testimonials</a></li>
+                <li class="mb-2"><a href="index.php#faq" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-question-circle"></i> FAQ</a></li>
+                <li class="mb-2"><a href="contact.php" class="text-decoration-none text-dark" data-bs-dismiss="offcanvas"><i class="bi bi-telephone"></i> Contact</a></li>
             </ul>
             
             <!-- Categories -->
@@ -147,7 +231,7 @@
                 <h6 class="text-primary fw-bold mb-3">Contact Info</h6>
                 <div class="mb-2">
                     <small class="text-muted">Phone</small><br>
-                    <a href="tel:+919872547768" class="text-decoration-none text-dark"><i class="bi bi-telephone"></i> +91 98725 47768</a>
+                    <a href="tel:+919779654617" class="text-decoration-none text-dark"><i class="bi bi-telephone"></i> +91 97796 54617</a>
                 </div>
                 <div class="mb-2">
                     <small class="text-muted">Email</small><br>
@@ -168,7 +252,7 @@
                 <a href="https://instagram.com" class="btn btn-outline-danger btn-sm mx-1" title="Instagram" data-bs-toggle="tooltip">
                     <i class="bi bi-instagram"></i>
                 </a>
-                <a href="https://wa.me/919876543210" class="btn btn-outline-success btn-sm mx-1" title="WhatsApp" data-bs-toggle="tooltip">
+                <a href="https://wa.me/919779654617" class="btn btn-outline-success btn-sm mx-1" title="WhatsApp" data-bs-toggle="tooltip">
                     <i class="bi bi-whatsapp"></i>
                 </a>
                 <a href="https://youtube.com" class="btn btn-outline-danger btn-sm mx-1" title="YouTube" data-bs-toggle="tooltip">
