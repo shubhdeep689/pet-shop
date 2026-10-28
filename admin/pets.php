@@ -438,60 +438,14 @@ function e($value)
 
     </style>
 
+    <link rel="stylesheet" href="sidebar.css">
+
 </head>
 
 <body>
 
 
-<!-- =====================================================
-     SIDEBAR
-====================================================== -->
-
-<div class="sidebar">
-
-    <a href="index.php" class="sidebar-brand">
-        <i class="bi bi-heart-fill me-2"></i>
-        Brar Pet Shop
-    </a>
-
-    <a href="index.php" class="sidebar-link">
-        <i class="bi bi-speedometer2"></i>
-        Dashboard
-    </a>
-
-    <a href="pets.php" class="sidebar-link active">
-        <i class="bi bi-heart"></i>
-        Pets
-    </a>
-
-    <a href="products.php" class="sidebar-link">
-        <i class="bi bi-bag"></i>
-        Products
-    </a>
-
-    <a href="orders.php" class="sidebar-link">
-        <i class="bi bi-cart-check"></i>
-        Orders
-    </a>
-
-    <a href="users.php" class="sidebar-link">
-        <i class="bi bi-people"></i>
-        Users
-    </a>
-
-    <hr class="border-secondary">
-
-    <a href="../index.php" class="sidebar-link">
-        <i class="bi bi-globe"></i>
-        View Website
-    </a>
-
-    <a href="logout.php" class="sidebar-link text-danger">
-        <i class="bi bi-box-arrow-right"></i>
-        Logout
-    </a>
-
-</div>
+<?php require __DIR__ . "/sidebar.php"; ?>
 
 
 <!-- =====================================================

@@ -380,102 +380,14 @@ function getStatusBadge($status)
 
     </style>
 
+    <link rel="stylesheet" href="sidebar.css">
+
 </head>
 
 <body>
 
 
-<!-- =========================================================
-     SIDEBAR
-========================================================= -->
-
-<div class="sidebar">
-
-    <div class="sidebar-brand">
-
-        <h4>
-            <i class="bi bi-shield-check me-2"></i>
-            Brar Pet Shop
-        </h4>
-
-        <small class="text-white-50">
-            Admin Panel
-        </small>
-
-    </div>
-
-
-    <div class="sidebar-menu">
-
-        <a href="index.php">
-
-            <i class="bi bi-speedometer2"></i>
-
-            Dashboard
-
-        </a>
-
-
-        <a href="pets.php">
-
-            <i class="bi bi-heart-fill"></i>
-
-            Pets
-
-        </a>
-
-
-        <a href="products.php">
-
-            <i class="bi bi-bag-fill"></i>
-
-            Products
-
-        </a>
-
-
-        <a href="orders.php" class="active">
-
-            <i class="bi bi-cart-check-fill"></i>
-
-            Orders
-
-        </a>
-
-
-        <a href="users.php">
-
-            <i class="bi bi-people-fill"></i>
-
-            Users
-
-        </a>
-
-
-        <hr class="border-secondary">
-
-
-        <a href="../index.php" target="_blank">
-
-            <i class="bi bi-globe"></i>
-
-            View Website
-
-        </a>
-
-
-        <a href="logout.php"
-           class="text-danger">
-
-            <i class="bi bi-box-arrow-right"></i>
-
-            Logout
-
-        </a>
-
-    </div>
-
-</div>
+<?php require __DIR__ . "/sidebar.php"; ?>
 
 
 <!-- =========================================================

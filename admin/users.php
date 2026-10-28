@@ -509,63 +509,20 @@ if ($newsletterCountResult) {
 
     </style>
 
+    <link rel="stylesheet" href="sidebar.css">
+
 </head>
 
 <body>
 
-<!-- ==========================================
-     SIDEBAR
-========================================== -->
-
-<div class="sidebar">
-
-    <div class="brand">
-        <i class="bi bi-heart-pulse-fill"></i>
-        <span>Brar Pet Shop</span>
-    </div>
-
-    <div class="menu-title">Main Menu</div>
-
-    <a href="index.php" class="sidebar-link">
-        <i class="bi bi-speedometer2"></i>
-        Dashboard
-    </a>
-
-    <a href="pets.php" class="sidebar-link">
-        <i class="bi bi-heart-fill"></i>
-        Pets
-    </a>
-
-    <a href="products.php" class="sidebar-link">
-        <i class="bi bi-box-seam-fill"></i>
-        Products
-    </a>
-
-    <a href="users.php" class="sidebar-link active">
-        <i class="bi bi-people-fill"></i>
-        Users
-    </a>
-
-    <div class="menu-title mt-4">Website</div>
-
-    <a href="../index.php" class="sidebar-link">
-        <i class="bi bi-globe2"></i>
-        View Website
-    </a>
-
-    <a href="logout.php" class="sidebar-link">
-        <i class="bi bi-box-arrow-right"></i>
-        Logout
-    </a>
-
-</div>
+<?php require __DIR__ . "/sidebar.php"; ?>
 
 
 <!-- ==========================================
      MAIN CONTENT
 ========================================== -->
 
-<div class="main">
+<div class="main-content">
 
     <!-- TOPBAR -->
 
@@ -1187,4 +1144,3 @@ if (isset($newsletterStmt) && $newsletterStmt instanceof mysqli_stmt) {
 }
 
 ?>
-

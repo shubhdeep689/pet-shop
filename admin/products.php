@@ -260,70 +260,15 @@ function stockNumberClass($stock)
 
     </style>
 
+    <link rel="stylesheet" href="sidebar.css">
+
 </head>
 
 <body>
 
-<div class="container-fluid">
+<?php require __DIR__ . "/sidebar.php"; ?>
 
-    <div class="row">
-
-        <!-- =========================
-             SIDEBAR
-        ========================== -->
-
-        <div class="col-lg-2 px-0 sidebar">
-
-            <div class="brand">
-                <i class="bi bi-shop me-2"></i>
-                Brar Pet Shop
-            </div>
-
-            <a href="index.php">
-                <i class="bi bi-speedometer2 me-2"></i>
-                Dashboard
-            </a>
-
-            <a href="pets.php">
-                <i class="bi bi-heart-fill me-2"></i>
-                Pets
-            </a>
-
-            <a href="products.php" class="active">
-                <i class="bi bi-box-seam-fill me-2"></i>
-                Products
-            </a>
-
-            <a href="orders.php">
-                <i class="bi bi-receipt me-2"></i>
-                Orders
-            </a>
-
-            <a href="users.php">
-                <i class="bi bi-people-fill me-2"></i>
-                Users
-            </a>
-
-            <hr class="text-secondary mx-3">
-
-            <a href="../index.php" target="_blank">
-                <i class="bi bi-globe2 me-2"></i>
-                View Website
-            </a>
-
-            <a href="logout.php">
-                <i class="bi bi-box-arrow-right me-2"></i>
-                Logout
-            </a>
-
-        </div>
-
-
-        <!-- =========================
-             MAIN CONTENT
-        ========================== -->
-
-        <div class="col-lg-10 main-content">
+<main id="productAdminContent" class="main-content">
 
             <!-- Header -->
 
@@ -1029,11 +974,7 @@ function stockNumberClass($stock)
 
             </div>
 
-        </div>
-
-    </div>
-
-</div>
+</main>
 
 
 <script
