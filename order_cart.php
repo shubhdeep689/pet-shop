@@ -268,39 +268,92 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
            REDUCE PRODUCT STOCK
         ========================= */
 
-        foreach ($cartItems as $item) {
+/* =========================
+   REDUCE PRODUCT AND PET STOCK
+========================= */
 
-            if ($item["item_type"] !== "Product") {
-                continue;
-            }
+foreach ($cartItems as $item) {
 
-            $productId = (int)$item["product_id"];
-            $quantity = (int)$item["quantity"];
+    $quantity = (int) $item["quantity"];
 
-            $stmtUpdate = $conn->prepare("
-                UPDATE products
-                SET stock = stock - ?
-                WHERE id = ?
-                AND stock >= ?
-            ");
+    // =========================
+    // REDUCE PRODUCT STOCK
+    // =========================
 
-            $stmtUpdate->bind_param(
-                "iii",
-                $quantity,
-                $productId,
-                $quantity
+    if ($item["item_type"] === "Product") {
+
+        $productId = (int) $item["product_id"];
+
+        $stmtUpdate = $conn->prepare("
+            UPDATE products
+            SET stock = stock - ?
+            WHERE id = ?
+            AND stock >= ?
+        ");
+
+        $stmtUpdate->bind_param(
+            "iii",
+            $quantity,
+            $productId,
+            $quantity
+        );
+
+        if (!$stmtUpdate->execute()) {
+            throw new Exception(
+                "Unable to update product stock."
             );
-
-            if (!$stmtUpdate->execute()) {
-                throw new Exception("Unable to update product stock.");
-            }
-
-            if ($stmtUpdate->affected_rows !== 1) {
-                throw new Exception(
-                    "Stock changed while placing the order. Please try again."
-                );
-            }
         }
+
+        if ($stmtUpdate->affected_rows !== 1) {
+            throw new Exception(
+                "Product stock changed while placing the order. Please try again."
+            );
+        }
+    }
+
+    // =========================
+    // REDUCE PET STOCK
+    // =========================
+
+    elseif ($item["item_type"] === "Pet") {
+
+        $petId = (int) $item["pet_id"];
+
+        $stmtUpdate = $conn->prepare("
+            UPDATE pets
+            SET
+                quantity = quantity - ?,
+                availability = CASE
+                    WHEN quantity - ? = 0 THEN 'Sold'
+                    ELSE availability
+                END
+            WHERE id = ?
+              AND quantity >= ?
+              AND availability = 'Available'
+        ");
+
+        $stmtUpdate->bind_param(
+            "iiii",
+            $quantity,
+            $quantity,
+            $petId,
+            $quantity
+        );
+
+        if (!$stmtUpdate->execute()) {
+            throw new Exception(
+                "Unable to update pet stock."
+            );
+        }
+
+        if ($stmtUpdate->affected_rows !== 1) {
+            throw new Exception(
+                "Pet stock changed while placing the order. Please try again."
+            );
+        }
+    }
+}
+
 
         /* =========================
            CLEAR CART

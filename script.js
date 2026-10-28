@@ -247,37 +247,14 @@ function initializeFormValidation() {
     
     Array.from(forms).forEach(form => {
         form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            
             if (!form.checkValidity()) {
+                event.preventDefault();
                 event.stopPropagation();
-            } else {
-                // Form is valid - handle submission
-                handleFormSubmit(form);
             }
             
             form.classList.add('was-validated');
         }, false);
     });
-}
-
-function handleFormSubmit(form) {
-    const formId = form.id;
-    
-    if (formId === 'contactForm') {
-        // Handle contact form
-        const fullName = document.getElementById('fullName').value;
-        const email = document.getElementById('email').value;
-        
-        alert(`Thank you, ${fullName}! Your message has been received. We'll contact you at ${email} soon.`);
-        form.reset();
-        form.classList.remove('was-validated');
-    } else if (formId === 'newsletterForm') {
-        // Handle newsletter form
-        const email = form.querySelector('input[type="email"]').value;
-        alert(`Thank you! You've been subscribed with ${email}`);
-        form.reset();
-    }
 }
 
 // ===============================================

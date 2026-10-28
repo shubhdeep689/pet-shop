@@ -31,7 +31,7 @@ $userName = $_SESSION["user_name"] ?? "";
                 height="60"
                 class="me-2 rounded-circle">
 
-            <span>Brar Pet Shop</span>
+            <span>Brar Pet Shop <span class="brand-paw">🐾</span></span>
         </a>
 
         <!-- Hamburger Menu -->

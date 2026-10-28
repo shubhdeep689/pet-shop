@@ -22,6 +22,11 @@ require_once "config/db.php";
     
     <!-- AOS (Animate On Scroll) CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
@@ -150,7 +155,8 @@ require_once "config/db.php";
         </div>
     </section>
 
-  <!-- Featured Pets Section -->
+ 
+<!-- Featured Pets Section -->
 <section id="pets" class="py-5">
 
     <div class="container">
@@ -180,13 +186,34 @@ require_once "config/db.php";
 
                 while ($pet = $petResult->fetch_assoc()):
 
-                    // Badge based on pet type
-                    $badge = "Available";
-                    $badgeClass = "bg-success";
+                    // Get current stock
+                    $quantity = (int) $pet["quantity"];
+                    $availability = $pet["availability"];
 
-                    if ($pet["category"] === "bird") {
+                    // Determine availability badge
+                    if ($quantity <= 0 || $availability === "Sold") {
+
+                        $badge = "Sold Out";
+                        $badgeClass = "bg-danger";
+                        $isAvailable = false;
+
+                    } elseif ($availability === "Reserved") {
+
+                        $badge = "Reserved";
+                        $badgeClass = "bg-warning text-dark";
+                        $isAvailable = false;
+
+                    } elseif ($pet["category"] === "bird") {
+
                         $badge = "Limited";
                         $badgeClass = "bg-warning text-dark";
+                        $isAvailable = true;
+
+                    } else {
+
+                        $badge = "Available";
+                        $badgeClass = "bg-success";
+                        $isAvailable = true;
                     }
 
             ?>
@@ -209,7 +236,7 @@ require_once "config/db.php";
                             <div class="card-body">
 
                                 <span class="badge <?php echo $badgeClass; ?> mb-2">
-                                    <?php echo $badge; ?>
+                                    <?php echo htmlspecialchars($badge); ?>
                                 </span>
 
                                 <h5 class="card-title">
@@ -232,8 +259,29 @@ require_once "config/db.php";
                                     <small>
                                         <strong>Price:</strong>
                                         <span class="text-danger">
-                                            ₹<?php echo number_format((float)$pet["price"], 0); ?>
+                                            ₹<?php echo number_format((float) $pet["price"], 0); ?>
                                         </span>
+                                    </small>
+
+                                    <br>
+
+                                    <small>
+                                        <strong>Stock:</strong>
+
+                                        <?php if ($isAvailable): ?>
+
+                                            <span class="text-success">
+                                                <?php echo $quantity; ?> available
+                                            </span>
+
+                                        <?php else: ?>
+
+                                            <span class="text-danger">
+                                                <?php echo $quantity; ?> available
+                                            </span>
+
+                                        <?php endif; ?>
+
                                     </small>
 
                                 </div>
@@ -244,19 +292,34 @@ require_once "config/db.php";
                             <div class="card-footer bg-light d-grid gap-2">
 
                                 <a
-                                    href="product.php?id=<?php echo $pet["id"]; ?>"
+                                    href="product.php?id=<?php echo (int) $pet["id"]; ?>"
                                     class="btn btn-outline-primary btn-sm"
                                 >
                                     View Details
                                 </a>
 
-                                <a
-                                    href="add_to_cart.php?id=<?php echo $pet["id"]; ?>"
-                                    class="btn btn-primary btn-sm"
-                                >
-                                    <i class="bi bi-cart-plus me-1"></i>
-                                    Add to Cart
-                                </a>
+                                <?php if ($isAvailable): ?>
+
+                                    <a
+                                        href="add_to_cart.php?id=<?php echo (int) $pet["id"]; ?>"
+                                        class="btn btn-primary btn-sm"
+                                    >
+                                        <i class="bi bi-cart-plus me-1"></i>
+                                        Add to Cart
+                                    </a>
+
+                                <?php else: ?>
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-secondary btn-sm"
+                                        disabled
+                                    >
+                                        <i class="bi bi-cart-x me-1"></i>
+                                        <?php echo htmlspecialchars($badge); ?>
+                                    </button>
+
+                                <?php endif; ?>
 
                             </div>
 
@@ -304,97 +367,117 @@ require_once "config/db.php";
 
 </section>
 
-    <!-- Pet Categories Section -->
-    <section class="py-5 bg-light">
-        <div class="container">
-            <!-- Section Header -->
-            <div class="text-center mb-5" data-aos="fade-up">
-                <h2 class="display-5 fw-bold text-primary mb-2">Pet Categories</h2>
-                <p class="lead text-muted">Browse by Type</p>
-            </div>
 
-            <!-- Category Cards -->
-            <div class="row g-4">
-                <!-- Dogs -->
-                <div class="col-lg-2 col-md-4 col-sm-6" data-aos="flip-left">
-                    <a href="#" class="category-card text-decoration-none">
-                        <div class="card text-center h-100 border-0 shadow-sm">
-                            <div class="card-body">
-                                <i class="bi bi-dog display-4 text-primary mb-3"></i>
-                                <h6 class="card-title">Dogs</h6>
-                                <small class="text-muted">15+ Breeds</small>
-                            </div>
-                        </div>
-                    </a>
-                </div>
 
-                <!-- Cats -->
-                <div class="col-lg-2 col-md-4 col-sm-6" data-aos="flip-left" data-aos-delay="100">
-                    <a href="#" class="category-card text-decoration-none">
-                        <div class="card text-center h-100 border-0 shadow-sm">
-                            <div class="card-body">
-                                <i class="bi bi-cat display-4 text-danger mb-3"></i>
-                                <h6 class="card-title">Cats</h6>
-                                <small class="text-muted">10+ Breeds</small>
-                            </div>
-                        </div>
-                    </a>
-                </div>
+<!-- Pet Categories Section -->
+<section class="py-5 bg-light">
+    <div class="container">
 
-                <!-- Birds -->
-                <div class="col-lg-2 col-md-4 col-sm-6" data-aos="flip-left" data-aos-delay="200">
-                    <a href="#" class="category-card text-decoration-none">
-                        <div class="card text-center h-100 border-0 shadow-sm">
-                            <div class="card-body">
-                                <i class="bi bi-chat-right-dots display-4 text-success mb-3"></i>
-                                <h6 class="card-title">Birds</h6>
-                                <small class="text-muted">8+ Varieties</small>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Fish -->
-                <div class="col-lg-2 col-md-4 col-sm-6" data-aos="flip-left" data-aos-delay="300">
-                    <a href="#" class="category-card text-decoration-none">
-                        <div class="card text-center h-100 border-0 shadow-sm">
-                            <div class="card-body">
-                                <i class="bi bi-water display-4 text-info mb-3"></i>
-                                <h6 class="card-title">Fish</h6>
-                                <small class="text-muted">20+ Species</small>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Rabbits -->
-                <div class="col-lg-2 col-md-4 col-sm-6" data-aos="flip-left" data-aos-delay="400">
-                    <a href="#" class="category-card text-decoration-none">
-                        <div class="card text-center h-100 border-0 shadow-sm">
-                            <div class="card-body">
-                                <i class="bi bi-hourglass-split display-4 text-warning mb-3"></i>
-                                <h6 class="card-title">Rabbits</h6>
-                                <small class="text-muted">5+ Breeds</small>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Accessories -->
-                <div class="col-lg-2 col-md-4 col-sm-6" data-aos="flip-left" data-aos-delay="500">
-                    <a href="#" class="category-card text-decoration-none">
-                        <div class="card text-center h-100 border-0 shadow-sm">
-                            <div class="card-body">
-                                <i class="bi bi-bag display-4 text-secondary mb-3"></i>
-                                <h6 class="card-title">Accessories</h6>
-                                <small class="text-muted">100+ Items</small>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
+        <!-- Section Header -->
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-5 fw-bold text-primary mb-2">
+                Pet Categories
+            </h2>
+            <p class="lead text-muted">Browse by Type</p>
         </div>
-    </section>
+
+        <!-- Category Cards -->
+        <div class="row g-4">
+
+            <!-- Dogs -->
+            <div class="col-lg-2 col-md-4 col-sm-6"
+                 data-aos="flip-left">
+                <a href="#" class="category-card text-decoration-none">
+                    <div class="card text-center h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <i class="fa-solid fa-dog display-4 text-primary mb-3"></i>
+                            <h6 class="card-title">Dogs</h6>
+                            <small class="text-muted">15+ Breeds</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Cats -->
+            <div class="col-lg-2 col-md-4 col-sm-6"
+                 data-aos="flip-left"
+                 data-aos-delay="100">
+                <a href="#" class="category-card text-decoration-none">
+                    <div class="card text-center h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <i class="fa-solid fa-cat display-4 text-danger mb-3"></i>
+                            <h6 class="card-title">Cats</h6>
+                            <small class="text-muted">10+ Breeds</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Birds -->
+            <div class="col-lg-2 col-md-4 col-sm-6"
+                 data-aos="flip-left"
+                 data-aos-delay="200">
+                <a href="#" class="category-card text-decoration-none">
+                    <div class="card text-center h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <i class="fa-solid fa-dove display-4 text-success mb-3"></i>
+                            <h6 class="card-title">Birds</h6>
+                            <small class="text-muted">8+ Varieties</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Fish -->
+            <div class="col-lg-2 col-md-4 col-sm-6"
+                 data-aos="flip-left"
+                 data-aos-delay="300">
+                <a href="#" class="category-card text-decoration-none">
+                    <div class="card text-center h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <i class="fa-solid fa-fish display-4 text-info mb-3"></i>
+                            <h6 class="card-title">Fish</h6>
+                            <small class="text-muted">20+ Species</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Rabbits -->
+            <div class="col-lg-2 col-md-4 col-sm-6"
+                 data-aos="flip-left"
+                 data-aos-delay="400">
+                <a href="#" class="category-card text-decoration-none">
+                    <div class="card text-center h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <i class="fa-solid fa-carrot display-4 text-warning mb-3"></i>
+                            <h6 class="card-title">Rabbits</h6>
+                            <small class="text-muted">5+ Breeds</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Accessories -->
+            <div class="col-lg-2 col-md-4 col-sm-6"
+                 data-aos="flip-left"
+                 data-aos-delay="500">
+                <a href="#" class="category-card text-decoration-none">
+                    <div class="card text-center h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <i class="fa-solid fa-paw display-4 text-secondary mb-3"></i>
+                            <h6 class="card-title">Accessories</h6>
+                            <small class="text-muted">100+ Items</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
 
     <!-- Services Section -->
     <section id="services" class="py-5">
@@ -890,7 +973,7 @@ require_once "config/db.php";
                 <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="150">
                     <div class="counter-card">
                         <div class="counter-icon mb-3">
-                            <i class="bi bi-paw-fill display-3"></i>
+                            <i class="fa-solid fa-paw display-3"></i>
                         </div>
                         <h3 class="counter-number" data-target="2000">0</h3>
                         <p class="counter-label">Pets Sold</p>
@@ -930,6 +1013,7 @@ require_once "config/db.php";
 
         <!-- Section Header -->
         <div class="text-center mb-5" data-aos="fade-up">
+
             <h2 class="display-5 fw-bold text-primary mb-2">
                 Product Showcase
             </h2>
@@ -937,8 +1021,8 @@ require_once "config/db.php";
             <p class="lead text-muted">
                 Premium Pet Products
             </p>
-        </div>
 
+        </div>
 
         <!-- Product Cards -->
         <div class="row g-4">
@@ -954,118 +1038,218 @@ require_once "config/db.php";
 
                 while ($product = $productResult->fetch_assoc()):
 
+                    // Read stock from the correct database column.
+                    // Prefer stock; use quantity if stock is unavailable.
+                    if (isset($product["stock"])) {
+                        $stock = (int)$product["stock"];
+                    } elseif (isset($product["quantity"])) {
+                        $stock = (int)$product["quantity"];
+                    } else {
+                        // Stock column is missing: show a warning state
+                        // instead of allowing purchases without stock data.
+                        $stock = 0;
+                    }
+
             ?>
 
-                    <div class="col-lg-3 col-md-6"
-                         data-aos="fade-up"
-                         data-aos-delay="<?php echo $delay; ?>">
+                <div class="col-lg-3 col-md-6"
+                     data-aos="fade-up"
+                     data-aos-delay="<?php echo $delay; ?>">
 
-                        <div class="card h-100 product-card border-0 shadow-sm">
+                    <div class="card h-100 product-card border-0 shadow-sm">
 
+                        <!-- Product Image -->
+                        <div class="product-image position-relative">
 
-                            <!-- Product Image -->
-                            <div class="product-image position-relative">
+                            <img
+                                src="<?php echo htmlspecialchars($product["image"]); ?>"
+                                alt="<?php echo htmlspecialchars($product["name"]); ?>"
+                                class="card-img-top"
+                            >
 
-                                <img
-                                    src="<?php echo htmlspecialchars($product["image"]); ?>"
-                                    alt="<?php echo htmlspecialchars($product["name"]); ?>"
-                                    class="card-img-top"
-                                >
+                            <?php if (!empty($product["badge"])): ?>
 
-                                <?php if (!empty($product["badge"])): ?>
+                                <span class="badge
+                                    <?php
+                                    echo ($product["badge"] === "NEW")
+                                        ? "bg-success"
+                                        : "bg-danger";
+                                    ?>
+                                    position-absolute top-0 end-0 m-2">
 
-                                    <span class="badge
-                                        <?php
-                                        echo ($product["badge"] === "NEW")
-                                            ? "bg-success"
-                                            : "bg-danger";
+                                    <?php echo htmlspecialchars($product["badge"]); ?>
+
+                                </span>
+
+                            <?php endif; ?>
+
+                            <!-- Out of Stock Image Badge -->
+                            <?php if ($stock <= 0): ?>
+
+                                <span class="badge bg-danger position-absolute top-0 start-0 m-2">
+                                    <i class="bi bi-x-circle-fill me-1"></i>
+                                    OUT OF STOCK
+                                </span>
+
+                            <?php endif; ?>
+
+                        </div>
+
+                        <!-- Product Details -->
+                        <div class="card-body">
+
+                            <h5 class="card-title">
+                                <?php echo htmlspecialchars($product["name"]); ?>
+                            </h5>
+
+                            <!-- Rating -->
+                            <div class="mb-2">
+
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <i class="bi bi-star-half text-warning"></i>
+
+                                <small class="text-muted">
+                                    (Popular)
+                                </small>
+
+                            </div>
+
+                            <!-- Description -->
+                            <?php if (!empty($product["description"])): ?>
+
+                                <p class="text-muted small">
+                                    <?php echo htmlspecialchars($product["description"]); ?>
+                                </p>
+
+                            <?php endif; ?>
+
+                            <!-- Price -->
+                            <h6 class="text-danger mb-3">
+
+                                ₹<?php
+                                echo number_format(
+                                    (float)$product["price"],
+                                    0
+                                );
+                                ?>
+
+                                <?php if (!empty($product["old_price"])): ?>
+
+                                    <small class="text-muted text-decoration-line-through">
+
+                                        ₹<?php
+                                        echo number_format(
+                                            (float)$product["old_price"],
+                                            0
+                                        );
                                         ?>
-                                        position-absolute top-0 end-0 m-2">
 
-                                        <?php echo htmlspecialchars($product["badge"]); ?>
-
-                                    </span>
+                                    </small>
 
                                 <?php endif; ?>
 
-                            </div>
+                            </h6>
 
+                        </div>
 
-                            <!-- Product Details -->
-                            <div class="card-body">
+                        <!-- Stock Status and Buttons -->
+                        <div class="card-footer bg-light border-0">
 
-                                <h5 class="card-title">
-                                    <?php echo htmlspecialchars($product["name"]); ?>
-                                </h5>
+                            <?php if ($stock <= 0): ?>
 
-
-                                <!-- Rating -->
+                                <!-- Out of Stock -->
                                 <div class="mb-2">
 
-                                    <i class="bi bi-star-fill text-warning"></i>
-                                    <i class="bi bi-star-fill text-warning"></i>
-                                    <i class="bi bi-star-fill text-warning"></i>
-                                    <i class="bi bi-star-fill text-warning"></i>
-                                    <i class="bi bi-star-half text-warning"></i>
-
-                                    <small class="text-muted">
-                                        (Popular)
-                                    </small>
+                                    <span class="badge bg-danger">
+                                        <i class="bi bi-x-circle-fill me-1"></i>
+                                        Out of Stock
+                                    </span>
 
                                 </div>
 
-
-                                <!-- Price -->
-                                <h6 class="text-danger mb-3">
-
-                                    ₹<?php
-                                    echo number_format(
-                                        (float)$product["price"],
-                                        0
-                                    );
-                                    ?>
-
-
-                                    <?php if (!empty($product["old_price"])): ?>
-
-                                        <small class="text-muted text-decoration-line-through">
-
-                                            ₹<?php
-                                            echo number_format(
-                                                (float)$product["old_price"],
-                                                0
-                                            );
-                                            ?>
-
-                                        </small>
-
-                                    <?php endif; ?>
-
-                                </h6>
-
-                            </div>
-
-
-                            <!-- Add To Cart -->
-                            <div class="card-footer bg-light border-0">
-
                                 <a
-                                    href="add_to_cart.php?product_id=<?php echo $product["id"]; ?>"
-                                    class="btn btn-primary w-100 btn-sm"
+                                    href="add_to_wishlist.php?product_id=<?php echo (int)$product["id"]; ?>"
+                                    class="btn btn-outline-danger w-100 btn-sm mb-2"
                                 >
-
-                                    <i class="bi bi-cart-plus me-1"></i>
-
-                                    Add to Cart
-
+                                    <i class="bi bi-heart me-1"></i>
+                                    Add to Wishlist
                                 </a>
 
-                            </div>
+                                <button
+                                    type="button"
+                                    class="btn btn-danger w-100 btn-sm"
+                                    disabled
+                                >
+                                    <i class="bi bi-x-circle me-1"></i>
+                                    Out of Stock
+                                </button>
+
+                            <?php elseif ($stock <= 5): ?>
+
+                                <!-- Low Stock -->
+                                <div class="mb-2">
+
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                        Only <?php echo $stock; ?> left
+                                    </span>
+
+                                </div>
+
+                                <a
+                                    href="add_to_wishlist.php?product_id=<?php echo (int)$product["id"]; ?>"
+                                    class="btn btn-outline-danger w-100 btn-sm mb-2"
+                                >
+                                    <i class="bi bi-heart me-1"></i>
+                                    Add to Wishlist
+                                </a>
+
+                                <a
+                                    href="add_to_cart.php?product_id=<?php echo (int)$product["id"]; ?>"
+                                    class="btn btn-primary w-100 btn-sm"
+                                >
+                                    <i class="bi bi-cart-plus me-1"></i>
+                                    Add to Cart
+                                </a>
+
+                            <?php else: ?>
+
+                                <!-- In Stock -->
+                                <div class="mb-2">
+
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle-fill me-1"></i>
+                                        In Stock
+                                    </span>
+
+                                </div>
+
+                                <a
+                                    href="add_to_wishlist.php?product_id=<?php echo (int)$product["id"]; ?>"
+                                    class="btn btn-outline-danger w-100 btn-sm mb-2"
+                                >
+                                    <i class="bi bi-heart me-1"></i>
+                                    Add to Wishlist
+                                </a>
+
+                                <a
+                                    href="add_to_cart.php?product_id=<?php echo (int)$product["id"]; ?>"
+                                    class="btn btn-primary w-100 btn-sm"
+                                >
+                                    <i class="bi bi-cart-plus me-1"></i>
+                                    Add to Cart
+                                </a>
+
+                            <?php endif; ?>
 
                         </div>
 
                     </div>
 
+                </div>
 
             <?php
 
@@ -1081,6 +1265,7 @@ require_once "config/db.php";
                 <div class="col-12 text-center">
 
                     <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
                         No products available right now.
                     </div>
 
@@ -1089,7 +1274,6 @@ require_once "config/db.php";
             <?php endif; ?>
 
         </div>
-
 
         <!-- View All Products -->
         <div class="text-center mt-5">
@@ -1107,6 +1291,7 @@ require_once "config/db.php";
     </div>
 
 </section>
+
 
 
     <!-- Testimonials Section -->
@@ -1463,7 +1648,7 @@ require_once "config/db.php";
                         <a href="#" class="btn btn-primary btn-lg">
                             <i class="bi bi-shop"></i> Visit Store
                         </a>
-                        <a href="tel:+919876543210" class="btn btn-light btn-lg">
+                        <a href="tel:+919779654617" class="btn btn-light btn-lg">
                             <i class="bi bi-telephone"></i> Call Now
                         </a>
                     </div>
@@ -1472,152 +1657,253 @@ require_once "config/db.php";
         </div>
     </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="py-5 bg-light">
-        <div class="container">
-            <!-- Section Header -->
-            <div class="text-center mb-5" data-aos="fade-up">
-                <h2 class="display-5 fw-bold text-primary mb-2">Contact Us</h2>
-                <p class="lead text-muted">Get in Touch with Us</p>
-            </div>
+<!-- Contact Section -->
 
-            <!-- Contact Form and Info -->
-            <div class="row g-4">
-                <!-- Contact Form -->
-                <div class="col-lg-6" data-aos="fade-right">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title mb-4">Send us a Message</h5>
-                            <form id="contactForm" novalidate>
-                                <!-- Full Name -->
-                                <div class="mb-3">
-                                    <label for="fullName" class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="fullName" placeholder="Your Full Name" required>
-                                    <div class="invalid-feedback">Please provide a valid full name.</div>
-                                </div>
+<section id="contact" class="py-5 bg-light">
+    <div class="container">
 
-                                <!-- Email -->
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email Address</label>
-                                    <input type="email" class="form-control" id="email" placeholder="your@email.com" required>
-                                    <div class="invalid-feedback">Please provide a valid email address.</div>
-                                </div>
 
-                                <!-- Phone -->
-                                <div class="mb-3">
-                                    <label for="phone" class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" placeholder="+91 XXXXXXXXXX" required>
-                                    <div class="invalid-feedback">Please provide a valid phone number.</div>
-                                </div>
+    <!-- Section Header -->
+    <div class="text-center mb-5" data-aos="fade-up">
+        <h2 class="display-5 fw-bold text-primary mb-2">Contact Us</h2>
+        <p class="lead text-muted">Get in Touch with Us</p>
+    </div>
 
-                                <!-- Pet Type -->
-                                <div class="mb-3">
-                                    <label for="petType" class="form-label">Pet Type</label>
-                                    <select class="form-select" id="petType" required>
-                                        <option value="">Select Pet Type</option>
-                                        <option value="dog">Dog</option>
-                                        <option value="cat">Cat</option>
-                                        <option value="bird">Bird</option>
-                                        <option value="fish">Fish</option>
-                                        <option value="rabbit">Rabbit</option>
-                                        <option value="hamster">Hamster</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                    <div class="invalid-feedback">Please select a pet type.</div>
-                                </div>
+    <!-- Contact Form and Information: Same Row -->
+    <div class="row g-4">
 
-                                <!-- Subject -->
-                                <div class="mb-3">
-                                    <label for="subject" class="form-label">Subject</label>
-                                    <input type="text" class="form-control" id="subject" placeholder="Inquiry Subject" required>
-                                    <div class="invalid-feedback">Please provide a subject.</div>
-                                </div>
+        <!-- Contact Form -->
+        <div class="col-lg-6" data-aos="fade-right">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
 
-                                <!-- Message -->
-                                <div class="mb-3">
-                                    <label for="message" class="form-label">Message</label>
-                                    <textarea class="form-control" id="message" rows="4" placeholder="Your message here..." required></textarea>
-                                    <div class="invalid-feedback">Please provide a message.</div>
-                                </div>
+                    <h5 class="card-title mb-4">Send us a Message</h5>
 
-                                <!-- Submit & Reset Buttons -->
-                                <div class="gap-2 d-flex">
-                                    <button type="submit" class="btn btn-primary flex-grow-1">
-                                        <i class="bi bi-send"></i> Submit
-                                    </button>
-                                    <button type="reset" class="btn btn-outline-secondary flex-grow-1">
-                                        <i class="bi bi-arrow-clockwise"></i> Reset
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                    <form id="contactForm"
+                          action="submit_contact.php"
+                          method="POST"
+                          novalidate>
 
-                <!-- Contact Information -->
-                <div class="col-lg-6" data-aos="fade-left">
-                    <div class="card border-0 shadow-sm mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title mb-4">Contact Information</h5>
-                            
-                            <!-- Address -->
-                            <div class="mb-4">
-                                <h6 class="text-primary mb-2"><i class="bi bi-geo-alt"></i> Address</h6>
-                                <p class="text-muted">
-                                    Brar Pet Shop<br>
-                                    Old Fazilka, Abohar<br>
-                                    Punjab 152116
-                                </p>
-                            </div>
-
-                            <!-- Phone -->
-                            <div class="mb-4">
-                                <h6 class="text-primary mb-2"><i class="bi bi-telephone"></i> Phone</h6>
-                                <a href="tel:+919779654617" class="text-decoration-none text-dark">+91 97796 54617
-                        
-                                </a>
-                            </div>
-
-                            <!-- Email -->
-                            <div class="mb-4">
-                                <h6 class="text-primary mb-2"><i class="bi bi-envelope"></i> Email</h6>
-                                <a href="mailto:info@brarpetshop.com" class="text-decoration-none text-dark">info@brarpetshop.com</a>
-                            </div>
-
-                            <!-- Opening Hours -->
-                            <div class="mb-4">
-                                <h6 class="text-primary mb-2"><i class="bi bi-clock"></i> Opening Hours</h6>
-                                <p class="text-muted mb-1">Monday - Saturday: 9:00 AM - 6:00 PM</p>
-                                <p class="text-muted">Sunday: 10:00 AM - 4:00 PM</p>
-                            </div>
-
-                            <!-- Quick Links -->
-                            <div>
-                                <h6 class="text-primary mb-2">Follow Us</h6>
-                                <div class="gap-2 d-flex flex-wrap">
-                                    <a href="https://facebook.com" class="btn btn-outline-primary btn-sm" title="Facebook" data-bs-toggle="tooltip">
-                                        <i class="bi bi-facebook"></i>
-                                    </a>
-                                    <a href="https://instagram.com" class="btn btn-outline-danger btn-sm" title="Instagram" data-bs-toggle="tooltip">
-                                        <i class="bi bi-instagram"></i>
-                                    </a>
-                                    <a href="https://wa.me/91977965617" class="btn btn-outline-success btn-sm" title="WhatsApp" data-bs-toggle="tooltip">
-                                        <i class="bi bi-whatsapp"></i>
-                                    </a>
-                                    <a href="https://youtube.com" class="btn btn-outline-danger btn-sm" title="YouTube" data-bs-toggle="tooltip">
-                                        <i class="bi bi-youtube"></i>
-                                    </a>
-                                    <a href="https://twitter.com" class="btn btn-outline-info btn-sm" title="X (Twitter)" data-bs-toggle="tooltip">
-                                        <i class="bi bi-twitter"></i>
-                                    </a>
-                                </div>
+                        <!-- Full Name -->
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Full Name</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="fullName"
+                                   name="fullName"
+                                   placeholder="Your Full Name"
+                                   maxlength="100"
+                                   autocomplete="name"
+                                   required>
+                            <div class="invalid-feedback">
+                                Please provide a valid full name.
                             </div>
                         </div>
-                    </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email"
+                                   class="form-control"
+                                   id="email"
+                                   name="email"
+                                   placeholder="your@email.com"
+                                   maxlength="150"
+                                   autocomplete="email"
+                                   required>
+                            <div class="invalid-feedback">
+                                Please provide a valid email address.
+                            </div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel"
+                                   class="form-control"
+                                   id="phone"
+                                   name="phone"
+                                   placeholder="+91 XXXXXXXXXX"
+                                   maxlength="20"
+                                   autocomplete="tel"
+                                   required>
+                            <div class="invalid-feedback">
+                                Please provide a valid phone number.
+                            </div>
+                        </div>
+
+                        <!-- Pet Type -->
+                        <div class="mb-3">
+                            <label for="petType" class="form-label">Pet Type</label>
+                            <select class="form-select"
+                                    id="petType"
+                                    name="petType"
+                                    required>
+                                <option value="">Select Pet Type</option>
+                                <option value="dog">Dog</option>
+                                <option value="cat">Cat</option>
+                                <option value="bird">Bird</option>
+                                <option value="fish">Fish</option>
+                                <option value="rabbit">Rabbit</option>
+                                <option value="hamster">Hamster</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a pet type.
+                            </div>
+                        </div>
+
+                        <!-- Subject -->
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="subject"
+                                   name="subject"
+                                   placeholder="Inquiry Subject"
+                                   maxlength="200"
+                                   required>
+                            <div class="invalid-feedback">
+                                Please provide a subject.
+                            </div>
+                        </div>
+
+                        <!-- Message -->
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control"
+                                      id="message"
+                                      name="message"
+                                      rows="4"
+                                      maxlength="10000"
+                                      placeholder="Your message here..."
+                                      required></textarea>
+                            <div class="invalid-feedback">
+                                Please provide a message.
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="gap-2 d-flex">
+                            <button type="submit"
+                                    class="btn btn-primary flex-grow-1">
+                                <i class="bi bi-send"></i> Submit
+                            </button>
+
+                            <button type="reset"
+                                    class="btn btn-outline-secondary flex-grow-1">
+                                <i class="bi bi-arrow-clockwise"></i> Reset
+                            </button>
+                        </div>
+
+                    </form>
                 </div>
             </div>
         </div>
-    </section>
+
+        <!-- Contact Information -->
+        <div class="col-lg-6" data-aos="fade-left">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+
+                    <h5 class="card-title mb-4">Contact Information</h5>
+
+                    <!-- Address -->
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-2">
+                            <i class="bi bi-geo-alt"></i> Address
+                        </h6>
+                        <p class="text-muted">
+                            Brar Pet Shop<br>
+                            Old Fazilka, Abohar<br>
+                            Punjab 152116
+                        </p>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-2">
+                            <i class="bi bi-telephone"></i> Phone
+                        </h6>
+                        <a href="tel:+919779654617"
+                           class="text-decoration-none text-dark">
+                            +91 97796 54617
+                        </a>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-2">
+                            <i class="bi bi-envelope"></i> Email
+                        </h6>
+                        <a href="mailto:info@brarpetshop.com"
+                           class="text-decoration-none text-dark">
+                            info@brarpetshop.com
+                        </a>
+                    </div>
+
+                    <!-- Opening Hours -->
+                    <div class="mb-4">
+                        <h6 class="text-primary mb-2">
+                            <i class="bi bi-clock"></i> Opening Hours
+                        </h6>
+                        <p class="text-muted mb-1">
+                            Monday - Saturday: 9:00 AM - 6:00 PM
+                        </p>
+                        <p class="text-muted">
+                            Sunday: 10:00 AM - 4:00 PM
+                        </p>
+                    </div>
+
+                    <!-- Social Links -->
+                    <div>
+                        <h6 class="text-primary mb-2">Follow Us</h6>
+
+                        <div class="gap-2 d-flex flex-wrap">
+                            <a href="https://facebook.com"
+                               class="btn btn-outline-primary btn-sm"
+                               title="Facebook">
+                                <i class="bi bi-facebook"></i>
+                            </a>
+
+                            <a href="https://instagram.com"
+                               class="btn btn-outline-danger btn-sm"
+                               title="Instagram">
+                                <i class="bi bi-instagram"></i>
+                            </a>
+
+                            <a href="https://wa.me/919779654617"
+                               class="btn btn-outline-success btn-sm"
+                               title="WhatsApp">
+                                <i class="bi bi-whatsapp"></i>
+                            </a>
+
+                            <a href="https://youtube.com"
+                               class="btn btn-outline-danger btn-sm"
+                               title="YouTube">
+                                <i class="bi bi-youtube"></i>
+                            </a>
+
+                            <a href="https://twitter.com"
+                               class="btn btn-outline-info btn-sm"
+                               title="X (Twitter)">
+                                <i class="bi bi-twitter"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- End Contact Form and Information Row -->
+
+</div>
+
+
+</section>
+
 
     <!-- Google Map Section -->
     <section class="py-5">

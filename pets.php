@@ -448,44 +448,42 @@ $result = $stmt->get_result();
                                 <div class="card-body">
 
 
-                                    <!-- =================================================
-                                         AVAILABILITY
-                                    ================================================== -->
+                                
+<!-- PET AVAILABILITY AND STOCK -->
 
-                                    <?php if ($pet["availability"] === "Available"): ?>
+<?php
+$stock = (int) $pet["quantity"];
 
-                                        <span class="badge bg-success mb-2">
+if ($stock <= 0):
+?>
+    <span class="badge bg-danger mb-2">
+        <i class="bi bi-x-circle me-1"></i>
+        Sold Out
+    </span>
 
-                                            <i class="bi bi-check-circle me-1"></i>
+    <p class="mb-2">
+        <strong>Stock:</strong>
+        <span class="text-danger fw-bold">0 available</span>
+    </p>
 
-                                            Available
+<?php else: ?>
 
-                                        </span>
+    <span class="badge bg-success mb-2">
+        <i class="bi bi-check-circle me-1"></i>
+        Available
+    </span>
+
+    <p class="mb-2">
+        <strong>Stock:</strong>
+        <span class="text-success fw-bold">
+            <?php echo $stock; ?>
+            <?php echo $stock === 1 ? "available" : "available"; ?>
+        </span>
+    </p>
+
+<?php endif; ?>
 
 
-                                    <?php elseif ($pet["availability"] === "Reserved"): ?>
-
-                                        <span
-                                            class="badge bg-warning text-dark mb-2">
-
-                                            <i class="bi bi-clock me-1"></i>
-
-                                            Reserved
-
-                                        </span>
-
-
-                                    <?php else: ?>
-
-                                        <span class="badge bg-danger mb-2">
-
-                                            <i class="bi bi-x-circle me-1"></i>
-
-                                            Sold
-
-                                        </span>
-
-                                    <?php endif; ?>
 
 
                                     <!-- PET NAME -->

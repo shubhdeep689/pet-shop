@@ -46,32 +46,37 @@
                     <div class="card border-0 shadow-sm">
                         <div class="card-body">
                             <h5 class="card-title mb-4">Send us a Message</h5>
-                            <form id="contactForm" novalidate>
+                            <?php if (isset($_GET["sent"]) && $_GET["sent"] === "1"): ?>
+                                <div class="alert alert-success" role="status">
+                                    Your message has been sent successfully.
+                                </div>
+                            <?php endif; ?>
+                            <form id="contactForm" action="submit_contact.php" method="POST" novalidate>
                                 <!-- Full Name -->
                                 <div class="mb-3">
                                     <label for="fullName" class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="fullName" placeholder="Your Full Name" required>
+                                    <input type="text" class="form-control" id="fullName" name="fullName" maxlength="100" placeholder="Your Full Name" required>
                                     <div class="invalid-feedback">Please provide a valid full name.</div>
                                 </div>
 
                                 <!-- Email -->
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email Address</label>
-                                    <input type="email" class="form-control" id="email" placeholder="your@email.com" required>
+                                    <input type="email" class="form-control" id="email" name="email" maxlength="150" placeholder="your@email.com" required>
                                     <div class="invalid-feedback">Please provide a valid email address.</div>
                                 </div>
 
                                 <!-- Phone -->
                                 <div class="mb-3">
                                     <label for="phone" class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-control" id="phone" placeholder="+91 XXXXXXXXXX" required>
+                                    <input type="tel" class="form-control" id="phone" name="phone" maxlength="20" placeholder="+91 XXXXXXXXXX" required>
                                     <div class="invalid-feedback">Please provide a valid phone number.</div>
                                 </div>
 
                                 <!-- Pet Type -->
                                 <div class="mb-3">
                                     <label for="petType" class="form-label">Pet Type</label>
-                                    <select class="form-select" id="petType" required>
+                                    <select class="form-select" id="petType" name="petType" required>
                                         <option value="">Select Pet Type</option>
                                         <option value="dog">Dog</option>
                                         <option value="cat">Cat</option>
@@ -87,14 +92,14 @@
                                 <!-- Subject -->
                                 <div class="mb-3">
                                     <label for="subject" class="form-label">Subject</label>
-                                    <input type="text" class="form-control" id="subject" placeholder="Inquiry Subject" required>
+                                    <input type="text" class="form-control" id="subject" name="subject" maxlength="200" placeholder="Inquiry Subject" required>
                                     <div class="invalid-feedback">Please provide a subject.</div>
                                 </div>
 
                                 <!-- Message -->
                                 <div class="mb-3">
                                     <label for="message" class="form-label">Message</label>
-                                    <textarea class="form-control" id="message" rows="4" placeholder="Your message here..." required></textarea>
+                                    <textarea class="form-control" id="message" name="message" rows="4" maxlength="10000" placeholder="Your message here..." required></textarea>
                                     <div class="invalid-feedback">Please provide a message.</div>
                                 </div>
 

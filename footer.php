@@ -50,16 +50,50 @@
                         <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Home Delivery</a></li>
                     </ul>
                 </div>
+                
+<?php if (isset($_SESSION['newsletter_message'])): ?>
+    <div class="alert alert-<?php
+        echo htmlspecialchars($_SESSION['newsletter_status']);
+    ?> alert-dismissible fade show" role="alert">
 
-                <!-- Column 4: Newsletter -->
-                <div class="col-lg-3 col-md-6">
-                    <h6 class="text-primary fw-bold mb-3">Newsletter</h6>
-                    <p class="text mb-3">Subscribe to our newsletter to get updates on new pets and products.</p>
-                    <form class="input-group" id="newsletterForm">
-                        <input type="email" class="form-control" placeholder="Your email" aria-label="Your email" required>
-                        <button class="btn btn-primary" type="submit">Subscribe</button>
-                    </form>
-                </div>
+        <?php
+        echo htmlspecialchars($_SESSION['newsletter_message']);
+        ?>
+
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"></button>
+    </div>
+    <?php
+    unset($_SESSION['newsletter_message'], $_SESSION['newsletter_status']);
+    ?>
+<?php endif; ?>
+<!-- Column 4: Newsletter -->
+<div class="col-lg-3 col-md-6">
+    <h6 class="text-primary fw-bold mb-3">Newsletter</h6>
+
+    <p class="text mb-3">
+        Subscribe to our newsletter to get updates on new pets and products.
+    </p>
+
+    <form class="input-group" action="subscribe.php" method="POST">
+        <input
+            type="email"
+            name="email"
+            class="form-control"
+            placeholder="Your email"
+            aria-label="Your email"
+            required
+        >
+
+        <button class="btn btn-primary" type="submit">
+            Subscribe
+        </button>
+    </form>
+</div>
+
+
             </div>
 
             <!-- Footer Bottom -->

@@ -7,23 +7,24 @@ require_once "../config/db.php";
 $message = "";
 $messageType = "";
 
-
 /* =========================
    CHECK PET ID
 ========================= */
 
 if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
-
     header("Location: pets.php");
     exit();
-
 }
 
 $pet_id = (int) $_GET["id"];
 
+if ($pet_id <= 0) {
+    header("Location: pets.php");
+    exit();
+}
 
 /* =========================
-   GET PET
+   GET PET DETAILS
 ========================= */
 
 $stmt = $conn->prepare(
@@ -32,24 +33,23 @@ $stmt = $conn->prepare(
      WHERE id = ?"
 );
 
+if (!$stmt) {
+    die("Database error. Please try again.");
+}
+
 $stmt->bind_param("i", $pet_id);
 $stmt->execute();
 
 $result = $stmt->get_result();
 
 if ($result->num_rows !== 1) {
-
     $stmt->close();
-
     header("Location: pets.php");
     exit();
-
 }
 
 $pet = $result->fetch_assoc();
-
 $stmt->close();
-
 
 /* =========================
    DEFAULT VALUES
@@ -60,11 +60,11 @@ $category = $pet["category"];
 $price = $pet["price"];
 $description = $pet["description"];
 $age = $pet["age"];
+$quantity = (int) $pet["quantity"];
 $availability = $pet["availability"];
 $image = $pet["image"];
 
 $oldImage = $pet["image"];
-
 
 /* =========================
    UPDATE PET
@@ -77,21 +77,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $price = trim($_POST["price"] ?? "");
     $description = trim($_POST["description"] ?? "");
     $age = trim($_POST["age"] ?? "");
-    $availability = trim($_POST["availability"] ?? "Available");
+    $quantityInput = trim($_POST["quantity"] ?? "");
 
-    /*
-     * Keep the current image by default.
-     */
     $image = $oldImage;
 
-    /*
-     * Manual image path.
-     */
     $manualImage = trim($_POST["image"] ?? "");
 
-
     /* =========================
-       BASIC VALIDATION
+       VALIDATION
     ========================= */
 
     if (
@@ -99,23 +92,62 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $category === "" ||
         $price === "" ||
         $description === "" ||
-        $age === ""
+        $age === "" ||
+        $quantityInput === ""
     ) {
 
         $message = "Please fill in all required fields.";
         $messageType = "danger";
 
-    } elseif (!is_numeric($price) || $price < 0) {
+    } elseif (
+        !is_numeric($price) ||
+        !is_finite((float) $price) ||
+        (float) $price < 0
+    ) {
 
         $message = "Please enter a valid price.";
         $messageType = "danger";
 
+    } elseif (
+        !ctype_digit($quantityInput) ||
+        (float) $quantityInput > 2147483647
+    ) {
+
+        $message = "Quantity must be a valid non-negative whole number.";
+        $messageType = "danger";
+
+    } elseif (
+        !in_array(
+            $category,
+            ["dog", "cat", "bird", "fish", "small"],
+            true
+        )
+    ) {
+
+        $message = "Please select a valid pet category.";
+        $messageType = "danger";
+
     } else {
 
+        $quantity = (int) $quantityInput;
+        $price = (float) $price;
+
+        /*
+         * Automatically determine availability.
+         *
+         * Quantity 0 = Sold
+         * Quantity 1 or more = Available
+         */
+
+        $availability = ($quantity > 0)
+            ? "Available"
+            : "Sold";
 
         /* =========================
            IMAGE UPLOAD
         ========================= */
+
+        $uploadError = false;
 
         if (
             isset($_FILES["image_file"]) &&
@@ -124,37 +156,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             $file = $_FILES["image_file"];
 
-
-            /* Upload error */
-
             if ($file["error"] !== UPLOAD_ERR_OK) {
 
-                $message =
-                    "There was an error uploading the image.";
-
+                $message = "There was an error uploading the image.";
                 $messageType = "danger";
+                $uploadError = true;
 
             } elseif ($file["size"] > 5 * 1024 * 1024) {
 
-                $message =
-                    "Image size must be less than 5 MB.";
-
+                $message = "Image size must be less than 5 MB.";
                 $messageType = "danger";
+                $uploadError = true;
 
             } else {
 
-
-                /* Get extension */
-
                 $extension = strtolower(
-                    pathinfo(
-                        $file["name"],
-                        PATHINFO_EXTENSION
-                    )
+                    pathinfo($file["name"], PATHINFO_EXTENSION)
                 );
-
-
-                /* Allowed image formats */
 
                 $allowedExtensions = [
                     "jpg",
@@ -164,92 +182,60 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     "gif"
                 ];
 
+                $imageInfo = @getimagesize($file["tmp_name"]);
+
+                $allowedMimeTypes = [
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp",
+                    "image/gif"
+                ];
+
+                $mimeType = $imageInfo["mime"] ?? "";
 
                 if (
-                    !in_array(
-                        $extension,
-                        $allowedExtensions,
-                        true
-                    )
+                    !in_array($extension, $allowedExtensions, true) ||
+                    $imageInfo === false ||
+                    !in_array($mimeType, $allowedMimeTypes, true)
                 ) {
 
-                    $message =
-                        "Invalid image format. Please use JPG, JPEG, PNG, WEBP or GIF.";
-
+                    $message = "Invalid image. Use JPG, JPEG, PNG, WEBP or GIF.";
                     $messageType = "danger";
+                    $uploadError = true;
 
                 } else {
 
+                    $uploadDirectory = "../IMAGES/";
 
-                    /* Check actual image */
+                    if (
+                        !is_dir($uploadDirectory) &&
+                        !mkdir($uploadDirectory, 0755, true) &&
+                        !is_dir($uploadDirectory)
+                    ) {
 
-                    $imageInfo =
-                        @getimagesize($file["tmp_name"]);
-
-
-                    if ($imageInfo === false) {
-
-                        $message =
-                            "The uploaded file is not a valid image.";
-
+                        $message = "Unable to create the image upload directory.";
                         $messageType = "danger";
+                        $uploadError = true;
+
+                    } elseif (!is_writable($uploadDirectory)) {
+
+                        $message = "The image upload directory is not writable.";
+                        $messageType = "danger";
+                        $uploadError = true;
 
                     } else {
 
-
-                        /* =========================
-                           UPLOAD DIRECTORY
-                        ========================= */
-
-                        $uploadDirectory = "../IMAGES/";
-
-
-                        /* Create folder if missing */
-
-                        if (!is_dir($uploadDirectory)) {
-
-                            mkdir(
-                                $uploadDirectory,
-                                0755,
-                                true
-                            );
-
-                        }
-
-
-                        /* =========================
-                           UNIQUE FILE NAME
-                        ========================= */
-
                         try {
-
-                            $uniqueName =
-                                "pet_" .
-                                bin2hex(
-                                    random_bytes(8)
-                                ) .
-                                "." .
-                                $extension;
-
+                            $uniqueName = "pet_" .
+                                bin2hex(random_bytes(8)) .
+                                "." . $extension;
                         } catch (Exception $e) {
-
-                            $uniqueName =
-                                "pet_" .
-                                uniqid() .
-                                "." .
-                                $extension;
-
+                            $uniqueName = "pet_" .
+                                uniqid("", true) .
+                                "." . $extension;
                         }
 
-
-                        $destination =
-                            $uploadDirectory .
-                            $uniqueName;
-
-
-                        /* =========================
-                           MOVE IMAGE
-                        ========================= */
+                        $destination = $uploadDirectory . $uniqueName;
 
                         if (
                             move_uploaded_file(
@@ -258,54 +244,57 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             )
                         ) {
 
-                            /*
-                             * New database path
-                             */
-
-                            $image =
-                                "IMAGES/" .
-                                $uniqueName;
+                            $image = "IMAGES/" . $uniqueName;
 
                         } else {
 
-                            $message =
-                                "Unable to save the uploaded image.";
-
+                            $message = "Unable to save the uploaded image.";
                             $messageType = "danger";
+                            $uploadError = true;
 
                         }
-
                     }
-
                 }
-
             }
-
         }
 
-
         /* =========================
-   MANUAL IMAGE PATH
-========================= */
+           MANUAL IMAGE PATH
+        ========================= */
 
-/*
- * Only use the manual image path when
- * no new image was uploaded.
- */
+        $noNewUpload =
+            !isset($_FILES["image_file"]) ||
+            $_FILES["image_file"]["error"] === UPLOAD_ERR_NO_FILE;
 
-$noNewUpload =
-    !isset($_FILES["image_file"]) ||
-    $_FILES["image_file"]["error"] === UPLOAD_ERR_NO_FILE;
+        if (
+            !$uploadError &&
+            $noNewUpload &&
+            $manualImage !== ""
+        ) {
 
-if ($message === "" && $noNewUpload) {
+            /*
+             * Prevent absolute paths and directory traversal.
+             * Example accepted path: IMAGES/dog.jpg
+             */
 
-    if ($manualImage !== "") {
+            $normalizedPath = str_replace("\\", "/", $manualImage);
 
-        $image = $manualImage;
+            if (
+                str_starts_with($normalizedPath, "/") ||
+                preg_match('/^[a-zA-Z]:/', $normalizedPath) ||
+                preg_match('~(^|/)\.\.(/|$)~', $normalizedPath)
+            ) {
 
-    }
+                $message = "Please enter a valid relative image path.";
+                $messageType = "danger";
 
-}
+            } else {
+
+                $image = $normalizedPath;
+
+            }
+        }
+
         /* =========================
            UPDATE DATABASE
         ========================= */
@@ -321,75 +310,74 @@ if ($message === "" && $noNewUpload) {
                     image = ?,
                     description = ?,
                     age = ?,
+                    quantity = ?,
                     availability = ?
                  WHERE id = ?"
             );
 
-
             if (!$stmt) {
 
-                $message =
-                    "Database error. Please try again.";
-
+                $message = "Database error. Please try again.";
                 $messageType = "danger";
 
             } else {
 
-
                 $stmt->bind_param(
-                    "ssdssssi",
+                    "ssdsssisi",
                     $name,
                     $category,
                     $price,
                     $image,
                     $description,
                     $age,
+                    $quantity,
                     $availability,
                     $pet_id
                 );
-
 
                 if ($stmt->execute()) {
 
                     $stmt->close();
 
-                    header(
-                        "Location: pets.php?success=updated"
-                    );
-
+                    header("Location: pets.php?success=updated");
                     exit();
 
                 } else {
 
-                    $message =
-                        "Unable to update pet. Please try again.";
-
+                    $message = "Unable to update pet. Please try again.";
                     $messageType = "danger";
 
                     $stmt->close();
 
                 }
-
             }
-
         }
-
     }
-
 }
+
+/* =========================
+   STOCK STATUS
+========================= */
+
+$stockStatus = ($quantity > 0) ? "Available" : "Sold Out";
+$stockClass = ($quantity > 0) ? "success" : "danger";
+
+/* =========================
+   IMAGE PREVIEW PATH
+========================= */
+
+$imagePreviewPath = "../" . ltrim($image, "/");
 
 ?>
 
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Edit Pet - Brar Pet Shop Admin</title>
 
@@ -400,7 +388,6 @@ if ($message === "" && $noNewUpload) {
 <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
 
 <style>
 
@@ -543,6 +530,18 @@ textarea.form-control {
     word-break: break-all;
 }
 
+.stock-card {
+    border-radius: 12px;
+    padding: 18px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.stock-number {
+    font-size: 30px;
+    font-weight: bold;
+}
+
 @media (max-width: 900px) {
 
     .sidebar {
@@ -562,7 +561,6 @@ textarea.form-control {
     .main {
         margin-left: 70px;
     }
-
 }
 
 @media (max-width: 576px) {
@@ -575,6 +573,11 @@ textarea.form-control {
         padding: 20px;
     }
 
+    .topbar {
+        padding: 15px;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
 }
 
 </style>
@@ -583,624 +586,498 @@ textarea.form-control {
 
 <body>
 
-
 <!-- SIDEBAR -->
 
 <div class="sidebar">
 
-<a href="index.php" class="sidebar-brand">
+    <a href="index.php" class="sidebar-brand">
+        <i class="bi bi-shop"></i>
+        <span>Brar Admin</span>
+    </a>
 
-    <i class="bi bi-shop"></i>
+    <a href="index.php" class="sidebar-link">
+        <i class="bi bi-speedometer2"></i>
+        <span>Dashboard</span>
+    </a>
 
-    <span>Brar Admin</span>
+    <a href="pets.php" class="sidebar-link active">
+        <i class="bi bi-heart-fill"></i>
+        <span>Pets</span>
+    </a>
 
-</a>
+    <a href="products.php" class="sidebar-link">
+        <i class="bi bi-box-seam"></i>
+        <span>Products</span>
+    </a>
 
+    <a href="users.php" class="sidebar-link">
+        <i class="bi bi-people-fill"></i>
+        <span>Users</span>
+    </a>
 
-<a href="index.php" class="sidebar-link">
+    <a href="../index.php" class="sidebar-link">
+        <i class="bi bi-globe"></i>
+        <span>View Website</span>
+    </a>
 
-    <i class="bi bi-speedometer2"></i>
-
-    <span>Dashboard</span>
-
-</a>
-
-
-<a href="pets.php" class="sidebar-link active">
-
-    <i class="bi bi-heart-fill"></i>
-
-    <span>Pets</span>
-
-</a>
-
-
-<a href="products.php" class="sidebar-link">
-
-    <i class="bi bi-box-seam"></i>
-
-    <span>Products</span>
-
-</a>
-
-
-<a href="users.php" class="sidebar-link">
-
-    <i class="bi bi-people-fill"></i>
-
-    <span>Users</span>
-
-</a>
-
-
-<a href="../index.php" class="sidebar-link">
-
-    <i class="bi bi-globe"></i>
-
-    <span>View Website</span>
-
-</a>
-
-
-<a href="logout.php"
-   class="sidebar-link text-danger mt-4">
-
-    <i class="bi bi-box-arrow-right"></i>
-
-    <span>Logout</span>
-
-</a>
+    <a href="logout.php" class="sidebar-link text-danger mt-4">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+    </a>
 
 </div>
-
 
 <!-- MAIN -->
 
 <div class="main">
 
+    <!-- TOPBAR -->
 
-<!-- TOPBAR -->
+    <div class="topbar d-flex justify-content-between align-items-center">
 
-<div class="topbar d-flex justify-content-between
-            align-items-center">
+        <div>
+            <h3 class="mb-1 fw-bold">
+                <i class="bi bi-pencil-square text-primary me-2"></i>
+                Edit Pet
+            </h3>
 
-    <div>
+            <small class="text-muted">
+                Update pet details, stock quantity and image
+            </small>
+        </div>
 
-        <h3 class="mb-1 fw-bold">
+        <div class="d-flex align-items-center gap-2">
 
-            <i class="bi bi-pencil-square text-primary me-2"></i>
+            <span class="pet-id">
+                Pet #<?php echo $pet_id; ?>
+            </span>
 
-            Edit Pet
+            <a href="pets.php" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>
+                Back
+            </a>
 
-        </h3>
-
-        <small class="text-muted">
-
-            Update pet information and availability
-
-        </small>
-
-    </div>
-
-
-    <div class="d-flex align-items-center gap-2">
-
-        <span class="pet-id">
-
-            Pet #<?php echo $pet_id; ?>
-
-        </span>
-
-
-        <a href="pets.php"
-           class="btn btn-outline-secondary">
-
-            <i class="bi bi-arrow-left me-1"></i>
-
-            Back
-
-        </a>
+        </div>
 
     </div>
 
-</div>
+    <!-- MESSAGE -->
 
+    <?php if ($message !== ""): ?>
 
-<!-- MESSAGE -->
+        <div class="alert alert-<?php echo htmlspecialchars($messageType); ?> alert-dismissible fade show">
 
-<?php if ($message !== ""): ?>
+            <i class="bi bi-exclamation-circle me-2"></i>
 
-<div class="alert alert-<?php echo $messageType; ?>
-            alert-dismissible fade show">
+            <?php echo htmlspecialchars($message); ?>
 
-    <i class="bi bi-exclamation-circle me-2"></i>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 
-    <?php echo htmlspecialchars($message); ?>
+        </div>
 
-    <button type="button"
-            class="btn-close"
-            data-bs-dismiss="alert">
-    </button>
+    <?php endif; ?>
 
-</div>
+    <!-- FORM -->
 
-<?php endif; ?>
+    <div class="form-card">
 
+        <form
+            method="POST"
+            action="pet_edit.php?id=<?php echo $pet_id; ?>"
+            enctype="multipart/form-data">
 
-<!-- FORM -->
+            <div class="row g-4">
 
-<div class="form-card">
+                <!-- LEFT SIDE -->
 
-<form method="POST"
-      action="pet_edit.php?id=<?php echo $pet_id; ?>"
-      enctype="multipart/form-data">
+                <div class="col-lg-8">
 
+                    <h5 class="fw-bold mb-4">
+                        <i class="bi bi-info-circle text-primary me-2"></i>
+                        Pet Information
+                    </h5>
 
-<div class="row g-4">
+                    <!-- NAME -->
 
+                    <div class="mb-3">
 
-<!-- LEFT -->
+                        <label class="form-label">
+                            Pet Name <span class="required">*</span>
+                        </label>
 
-<div class="col-lg-8">
+                        <input
+                            type="text"
+                            name="name"
+                            class="form-control"
+                            maxlength="150"
+                            value="<?php echo htmlspecialchars($name); ?>"
+                            required>
 
+                    </div>
 
-<h5 class="fw-bold mb-4">
+                    <!-- CATEGORY AND AGE -->
 
-    <i class="bi bi-info-circle text-primary me-2"></i>
+                    <div class="row">
 
-    Pet Information
+                        <div class="col-md-6 mb-3">
 
-</h5>
+                            <label class="form-label">
+                                Category <span class="required">*</span>
+                            </label>
 
+                            <select name="category" class="form-select" required>
 
-<!-- NAME -->
+                                <option value="">Select Category</option>
 
-<div class="mb-3">
+                                <?php
+                                $categories = [
+                                    "dog" => "Dog",
+                                    "cat" => "Cat",
+                                    "bird" => "Bird",
+                                    "fish" => "Fish",
+                                    "small" => "Small Pet"
+                                ];
 
-<label class="form-label">
+                                foreach ($categories as $value => $label):
+                                ?>
 
-    Pet Name
-    <span class="required">*</span>
+                                    <option
+                                        value="<?php echo htmlspecialchars($value); ?>"
+                                        <?php echo $category === $value ? "selected" : ""; ?>>
 
-</label>
+                                        <?php echo htmlspecialchars($label); ?>
 
-<input
-    type="text"
-    name="name"
-    class="form-control"
-    value="<?php echo htmlspecialchars($name); ?>"
-    required
->
+                                    </option>
 
-</div>
+                                <?php endforeach; ?>
 
+                            </select>
 
-<!-- CATEGORY + AGE -->
+                        </div>
 
-<div class="row">
+                        <div class="col-md-6 mb-3">
 
-<div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                Age <span class="required">*</span>
+                            </label>
 
-<label class="form-label">
+                            <input
+                                type="text"
+                                name="age"
+                                class="form-control"
+                                maxlength="50"
+                                value="<?php echo htmlspecialchars($age); ?>"
+                                placeholder="e.g. 2 years"
+                                required>
 
-    Category
-    <span class="required">*</span>
+                        </div>
 
-</label>
+                    </div>
 
-<select name="category"
-        class="form-select"
-        required>
+                    <!-- PRICE -->
 
-    <option value="">
-        Select Category
-    </option>
+                    <div class="mb-3">
 
-    <option value="dog"
-        <?php echo $category === "dog" ? "selected" : ""; ?>>
-        Dog
-    </option>
+                        <label class="form-label">
+                            Price (₹) <span class="required">*</span>
+                        </label>
 
-    <option value="cat"
-        <?php echo $category === "cat" ? "selected" : ""; ?>>
-        Cat
-    </option>
+                        <div class="input-group">
 
-    <option value="bird"
-        <?php echo $category === "bird" ? "selected" : ""; ?>>
-        Bird
-    </option>
+                            <span class="input-group-text">₹</span>
 
-    <option value="fish"
-        <?php echo $category === "fish" ? "selected" : ""; ?>>
-        Fish
-    </option>
+                            <input
+                                type="number"
+                                name="price"
+                                class="form-control"
+                                min="0"
+                                step="0.01"
+                                value="<?php echo htmlspecialchars((string)$price); ?>"
+                                required>
 
-    <option value="small"
-        <?php echo $category === "small" ? "selected" : ""; ?>>
-        Small Pet
-    </option>
+                        </div>
 
-</select>
+                    </div>
 
-</div>
+                    <!-- QUANTITY -->
 
+                    <div class="mb-4">
 
-<div class="col-md-6 mb-3">
+                        <label class="form-label">
+                            Available Quantity <span class="required">*</span>
+                        </label>
 
-<label class="form-label">
+                        <input
+                            type="number"
+                            name="quantity"
+                            id="quantity"
+                            class="form-control"
+                            min="0"
+                            max="2147483647"
+                            step="1"
+                            value="<?php echo htmlspecialchars((string)$quantity); ?>"
+                            required>
 
-    Age
-    <span class="required">*</span>
+                        <div class="form-text">
+                            Enter the number of pets currently available.
+                            Use 0 when no pets are available.
+                        </div>
 
-</label>
+                    </div>
 
-<input
-    type="text"
-    name="age"
-    class="form-control"
-    value="<?php echo htmlspecialchars($age); ?>"
-    placeholder="e.g. 2 years"
-    required
->
+                    <!-- STOCK STATUS -->
 
-</div>
+                    <div class="stock-card mb-4">
 
-</div>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
 
+                            <div>
 
-<!-- PRICE -->
+                                <div class="text-muted small mb-1">
+                                    Current Stock
+                                </div>
 
-<div class="mb-3">
+                                <div class="stock-number" id="stockNumber">
+                                    <?php echo $quantity; ?>
+                                </div>
 
-<label class="form-label">
+                            </div>
 
-    Price (₹)
-    <span class="required">*</span>
+                            <div class="text-end">
 
-</label>
+                                <span
+                                    id="stockBadge"
+                                    class="badge bg-<?php echo $stockClass; ?> fs-6">
 
-<div class="input-group">
+                                    <?php echo htmlspecialchars($stockStatus); ?>
 
-<span class="input-group-text">
-    ₹
-</span>
+                                </span>
 
-<input
-    type="number"
-    name="price"
-    class="form-control"
-    min="0"
-    step="0.01"
-    value="<?php echo htmlspecialchars($price); ?>"
-    required
->
+                                <div class="small text-muted mt-2">
+                                    Availability updates automatically
+                                </div>
 
-</div>
+                            </div>
 
-</div>
+                        </div>
 
+                    </div>
 
-<!-- DESCRIPTION -->
+                    <!-- DESCRIPTION -->
 
-<div class="mb-3">
+                    <div class="mb-3">
 
-<label class="form-label">
+                        <label class="form-label">
+                            Description <span class="required">*</span>
+                        </label>
 
-    Description
-    <span class="required">*</span>
+                        <textarea
+                            name="description"
+                            class="form-control"
+                            required><?php echo htmlspecialchars($description); ?></textarea>
 
-</label>
+                    </div>
 
-<textarea
-    name="description"
-    class="form-control"
-    required><?php echo htmlspecialchars($description); ?></textarea>
+                    <!-- IMAGE MANAGEMENT -->
 
-</div>
+                    <h5 class="fw-bold mt-4 mb-3">
+                        <i class="bi bi-image text-primary me-2"></i>
+                        Pet Image
+                    </h5>
 
+                    <div class="upload-box">
 
-<!-- AVAILABILITY -->
+                        <label class="form-label mb-2">
+                            <i class="bi bi-cloud-arrow-up text-primary me-1"></i>
+                            Upload New Image
+                        </label>
 
-<div class="mb-3">
+                        <input
+                            type="file"
+                            name="image_file"
+                            id="imageFile"
+                            class="form-control"
+                            accept=".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif">
 
-<label class="form-label">
+                        <div class="form-text">
+                            Maximum size: 5 MB. Formats: JPG, JPEG, PNG, WEBP and GIF.
+                        </div>
 
-    Availability
+                    </div>
 
-</label>
+                    <div class="or-divider">OR</div>
 
-<select name="availability"
-        class="form-select">
+                    <label class="form-label">
+                        <i class="bi bi-link-45deg text-primary me-1"></i>
+                        Image Path
+                    </label>
 
-    <option value="Available"
-        <?php echo $availability === "Available" ? "selected" : ""; ?>>
-        Available
-    </option>
+                    <input
+                        type="text"
+                        name="image"
+                        id="imageInput"
+                        class="form-control"
+                        value="<?php echo htmlspecialchars($image); ?>"
+                        placeholder="e.g. IMAGES/dog.jpg">
 
-    <option value="Sold"
-        <?php echo $availability === "Sold" ? "selected" : ""; ?>>
-        Sold
-    </option>
+                    <div class="form-text">
+                        Enter a relative path to an existing image.
+                        Leave unchanged to keep the current image.
+                    </div>
 
-    <option value="Reserved"
-        <?php echo $availability === "Reserved" ? "selected" : ""; ?>>
-        Reserved
-    </option>
+                    <div class="alert alert-info mt-3 mb-0">
 
-</select>
+                        <i class="bi bi-info-circle me-2"></i>
 
-</div>
+                        Uploading a new image takes priority over the image path.
 
+                    </div>
 
-<!-- IMAGE -->
+                    <!-- BUTTONS -->
 
-<div class="mb-3">
+                    <div class="d-flex gap-2 mt-4 flex-wrap">
 
-<label class="form-label">
+                        <button type="submit" class="btn btn-primary px-4">
 
-    Pet Image
+                            <i class="bi bi-check-circle me-1"></i>
+                            Update Pet
 
-</label>
+                        </button>
 
+                        <a href="pets.php" class="btn btn-outline-secondary px-4">
+                            Cancel
+                        </a>
 
-<!-- UPLOAD -->
+                    </div>
 
-<div class="upload-box">
+                </div>
 
-    <label class="form-label mb-2">
+                <!-- RIGHT SIDE -->
 
-        <i class="bi bi-cloud-arrow-up text-primary me-1"></i>
+                <div class="col-lg-4">
 
-        Upload New Image
+                    <div class="sticky-lg-top" style="top: 20px;">
 
-    </label>
+                        <h5 class="fw-bold mb-4">
+                            <i class="bi bi-image text-primary me-2"></i>
+                            Image Preview
+                        </h5>
 
-    <input
-        type="file"
-        name="image_file"
-        id="imageFile"
-        class="form-control"
-        accept=".jpg,.jpeg,.png,.webp,.gif,image/*"
-    >
+                        <img
+                            id="imagePreview"
+                            src="<?php echo htmlspecialchars($imagePreviewPath); ?>"
+                            alt="<?php echo htmlspecialchars($name); ?>"
+                            class="image-preview">
 
-    <div class="form-text">
+                        <div class="alert alert-light border mt-3">
 
-        Upload directly from your computer.
+                            <i class="bi bi-lightbulb text-warning me-2"></i>
 
-        Maximum size:
-        <strong>5 MB</strong>.
+                            <small>
+                                Select a new image or enter another image path
+                                to replace the current image.
+                            </small>
 
-        Allowed:
-        JPG, JPEG, PNG, WEBP, GIF.
+                        </div>
+
+                        <div class="card border-0 bg-light">
+
+                            <div class="card-body">
+
+                                <h6 class="fw-bold mb-3">
+                                    Pet Summary
+                                </h6>
+
+                                <p class="small text-muted mb-2">
+                                    <strong>Name:</strong>
+                                    <?php echo htmlspecialchars($name); ?>
+                                </p>
+
+                                <p class="small text-muted mb-2">
+                                    <strong>Category:</strong>
+                                    <?php echo htmlspecialchars(ucfirst($category)); ?>
+                                </p>
+
+                                <p class="small text-muted mb-2">
+                                    <strong>Age:</strong>
+                                    <?php echo htmlspecialchars($age); ?>
+                                </p>
+
+                                <p class="small text-muted mb-2">
+                                    <strong>Price:</strong>
+                                    ₹<?php echo number_format((float)$price, 2); ?>
+                                </p>
+
+                                <p class="small text-muted mb-2">
+                                    <strong>Quantity:</strong>
+                                    <?php echo $quantity; ?>
+                                </p>
+
+                                <p class="small text-muted mb-0">
+                                    <strong>Availability:</strong>
+                                    <?php echo htmlspecialchars($stockStatus); ?>
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
 
     </div>
 
 </div>
 
-
-<div class="or-divider">
-
-    OR
-
-</div>
-
-
-<!-- MANUAL PATH -->
-
-<label class="form-label">
-
-    <i class="bi bi-link-45deg text-primary me-1"></i>
-
-    Image Path
-
-</label>
-
-<input
-    type="text"
-    name="image"
-    id="imageInput"
-    class="form-control"
-    value="<?php echo htmlspecialchars($image); ?>"
-    placeholder="e.g. IMAGES/grmn.png"
->
-
-
-<div class="form-text">
-
-    Enter another existing image path if you don't
-    want to upload a new image.
-
-</div>
-
-
-<div class="alert alert-info mt-3 mb-0">
-
-    <i class="bi bi-info-circle me-2"></i>
-
-    <small>
-
-        <strong>Tip:</strong>
-        Leave both options unchanged if you want
-        to keep the current image.
-
-        If you upload a new image,
-        the uploaded image will be used automatically.
-
-    </small>
-
-</div>
-
-
-</div>
-
-
-<!-- BUTTONS -->
-
-<div class="d-flex gap-2 mt-4">
-
-<button
-    type="submit"
-    class="btn btn-primary px-4">
-
-    <i class="bi bi-check-circle me-1"></i>
-
-    Update Pet
-
-</button>
-
-
-<a href="pets.php"
-   class="btn btn-outline-secondary px-4">
-
-    Cancel
-
-</a>
-
-</div>
-
-
-</div>
-
-
-<!-- RIGHT -->
-
-<div class="col-lg-4">
-
-<div class="sticky-lg-top"
-     style="top: 20px;">
-
-
-<h5 class="fw-bold mb-4">
-
-    <i class="bi bi-image text-primary me-2"></i>
-
-    Pet Image
-
-</h5>
-
-
-<img
-    id="imagePreview"
-    src="../<?php echo htmlspecialchars($image); ?>"
-    alt="<?php echo htmlspecialchars($name); ?>"
-    class="image-preview"
->
-
-
-<div class="alert alert-light border mt-3">
-
-    <i class="bi bi-lightbulb text-warning me-2"></i>
-
-    <small>
-
-        Select a new image to replace the current
-        image, or enter a different image path.
-
-    </small>
-
-</div>
-
-
-<div class="card border-0 bg-light">
-
-<div class="card-body">
-
-<h6 class="fw-bold mb-3">
-
-    Current Image
-
-</h6>
-
-<p class="current-image-text mb-3">
-
-    <?php echo htmlspecialchars($image); ?>
-
-</p>
-
-
-<h6 class="fw-bold mb-3">
-
-    Current Pet
-
-</h6>
-
-<p class="small text-muted mb-2">
-
-    <strong>Name:</strong>
-
-    <?php echo htmlspecialchars($name); ?>
-
-</p>
-
-<p class="small text-muted mb-2">
-
-    <strong>Category:</strong>
-
-    <?php echo htmlspecialchars(ucfirst($category)); ?>
-
-</p>
-
-<p class="small text-muted mb-2">
-
-    <strong>Age:</strong>
-
-    <?php echo htmlspecialchars($age); ?>
-
-</p>
-
-<p class="small text-muted mb-0">
-
-    <strong>Price:</strong>
-
-    ₹<?php echo number_format((float)$price, 0); ?>
-
-</p>
-
-</div>
-
-</div>
-
-
-</div>
-
-</div>
-
-
-</div>
-
-</form>
-
-</div>
-
-
-</div>
-
-
-<!-- BOOTSTRAP -->
-
-<script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-</script>
-
-
-<!-- IMAGE PREVIEW -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 
-const imageFile =
-    document.getElementById("imageFile");
+/* =========================
+   QUANTITY PREVIEW
+========================= */
 
-const imageInput =
-    document.getElementById("imageInput");
+const quantityInput = document.getElementById("quantity");
+const stockNumber = document.getElementById("stockNumber");
+const stockBadge = document.getElementById("stockBadge");
 
-const imagePreview =
-    document.getElementById("imagePreview");
+function updateStockPreview() {
+
+    const quantity = Math.max(
+        0,
+        parseInt(quantityInput.value, 10) || 0
+    );
+
+    stockNumber.textContent = quantity;
+
+    if (quantity > 0) {
+
+        stockBadge.textContent = "Available";
+        stockBadge.className = "badge bg-success fs-6";
+
+    } else {
+
+        stockBadge.textContent = "Sold Out";
+        stockBadge.className = "badge bg-danger fs-6";
+
+    }
+}
+
+quantityInput.addEventListener("input", updateStockPreview);
 
 
 /* =========================
-   FILE UPLOAD PREVIEW
+   IMAGE PREVIEW
 ========================= */
+
+const imageFile = document.getElementById("imageFile");
+const imageInput = document.getElementById("imageInput");
+const imagePreview = document.getElementById("imagePreview");
 
 imageFile.addEventListener("change", function () {
 
@@ -1208,47 +1085,47 @@ imageFile.addEventListener("change", function () {
 
     if (file) {
 
-        const imageURL =
-            URL.createObjectURL(file);
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/gif"
+        ];
 
-        imagePreview.src = imageURL;
+        if (!allowedTypes.includes(file.type)) {
+            alert("Please select a valid JPG, PNG, WEBP or GIF image.");
+            this.value = "";
+            return;
+        }
 
-        /*
-         * Clear manual path when
-         * a new upload is selected.
-         */
+        if (file.size > 5 * 1024 * 1024) {
+            alert("Image size must be less than 5 MB.");
+            this.value = "";
+            return;
+        }
 
         imageInput.value = "";
 
+        imagePreview.src = URL.createObjectURL(file);
     }
-
 });
 
 
 /* =========================
-   MANUAL PATH PREVIEW
+   MANUAL IMAGE PATH PREVIEW
 ========================= */
 
 imageInput.addEventListener("input", function () {
 
-    /*
-     * If user enters a manual path,
-     * remove selected upload.
-     */
-
-    imageFile.value = "";
-
-    const path =
-        this.value.trim();
-
+    const path = this.value.trim();
 
     if (path !== "") {
 
-        imagePreview.src =
-            "../" + path;
+        imageFile.value = "";
+
+        imagePreview.src = "../" + path.replace(/^\/+/, "");
 
     }
-
 });
 
 
@@ -1258,16 +1135,12 @@ imageInput.addEventListener("input", function () {
 
 imagePreview.addEventListener("error", function () {
 
-    this.src =
-        "https://via.placeholder.com/500x350?text=Image+Not+Found";
+    this.alt = "Image not found";
 
 });
 
 </script>
 
-
 </body>
-
 </html>
-
 
